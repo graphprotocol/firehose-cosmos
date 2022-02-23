@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+set -o errexit,nounset,pipefail
+
+CLEANUP=${CLEANUP:-"0"}
+
+OS_PLATFORM=$(uname -s)
+OS_ARCH=$(uname -m)
+
+GAIA_PLATFORM="linux_amd64"
+GAIA_VERSION="v4.2.1"
+GAIA_GENESIS="https://github.com/cosmos/mainnet/raw/master/genesis.cosmoshub-4.json.gz"
+GAIA_ADDRESS_BOOK="https://quicksync.io/addrbook.cosmos.json"
+GAIA_SNAPSHOT="s3://figment-dev-firehose/cosmoshub-4/snapshots/9080100"
+GAIA_CONFIG="s3://figment-dev-firehose/cosmoshub-4/configs/config.toml"
+
+case $OS_PLATFORM-$OS_ARCH in
+  Darwin-x86_64) GAIA_PLATFORM="darwin_amd64" ;;
+  Darwin-arm64)  GAIA_PLATFORM="darwin_arm64" ;;
+  Linux-x86_64)  GAIA_PLATFORM="linux_amd64"  ;;
+  *) echo "Invalid platform"; exit 1 ;;
+esac
+
+if [[ -z $(which "wget" || true) ]]; then
+  echo "ERROR: wget is not installed"
+  exit 1
+fi
+
+if [[ $CLEANUP -eq "1" ]]; then
+  echo "Deleting all local data"
+  rm -rf ./tmp/
+fi
+
+echo "Setting up working directory"
+mkdir -p tmp
+pushd tmp
+
+echo "Your platform is $OS_PLATFORM/$OS_ARCH"
+
+if [ ! -f "gaiad" ]; then
+  echo "Downloading gaiad $GAIA_VERSION binary"
+  wget --quiet -O ./gaiad "https://github.com/figment-networks/gaia-dm/releases/download/$GAIA_VERSION/gaiad_${GAIA_VERSION}_deepmind_$GAIA_PLATFORM"
+  chmod +x ./gaiad
+fi
+
+if [ ! -d "gaia_home" ]; then
+  echo "Configuring gaia home directory"
+  ./gaiad --home=gaia_home init $(hostname) 2> /dev/null
+  rm -f \
+    gaia_home/config/genesis.json \
+    gaia_home/config/config.toml \
+    gaia_home/config/addrbook.json
+fi
+
+if [ ! -f "gaia_home/config/config.toml" ]; then
+  echo "Fetching gaia config"
+  # TODO
+fi
+
+if [ ! -f "gaia_home/config/genesis.json" ]; then
+  echo "Downloading gaia genesis file"
+  wget --quiet -O gaia_home/config/genesis.json.gz $GAIA_GENESIS
+  gunzip gaia_home/config/genesis.json.gz
+fi
+
+if [ ! -f "gaia_home/config/addrbook.json" ]; then
+  echo "Downloading address book"
+  wget --quiet -O gaia_home/config/addrbook.json $GAIA_ADDRESS_BOOK
+fi
+
+if [ ! -f "firehose.yml" ]; then
+  tee firehose.yml <<-END
+start:
+  args:
+    - ingestor
+    - merger
+    - firehose
+    - relayer
+  flags:
+    common-first-streamable-block: 5200791
+    ingestor-mode: node
+    ingestor-node-path: ./gaiad
+    ingestor-node-args: start --x-crisis-skip-assert-invariants --home=./gaia_home
+END
+fi
