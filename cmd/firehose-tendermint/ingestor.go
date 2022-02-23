@@ -80,11 +80,13 @@ func (app *IngestorApp) startFromStdin(ctx context.Context) error {
 
 func (app *IngestorApp) startFromNode(ctx context.Context) error {
 	args := strings.Split(app.nodeArgs, " ")
-
 	env := map[string]string{}
-	for _, val := range strings.Split(app.nodeEnv, ",") {
-		parts := strings.SplitN(val, "=", 2)
-		env[parts[0]] = parts[1]
+
+	if app.nodeEnv != "" {
+		for _, val := range strings.Split(app.nodeEnv, ",") {
+			parts := strings.SplitN(val, "=", 2)
+			env[parts[0]] = parts[1]
+		}
 	}
 
 	runner := noderunner.New(app.nodeBinPath, args, true)

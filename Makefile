@@ -8,6 +8,10 @@ LDFLAGS      ?= -s -w -X main.BuildCommit=$(BUILD_COMMIT) -X main.BuildTime=$(BU
 build:
 	go build -o build/firehose-tendermint -ldflags "$(LDFLAGS)" ./cmd/firehose-tendermint
 
+.PHONY: install
+install:
+	go install -ldflags "$(LDFLAGS)" ./cmd/firehose-tendermint
+
 .PHONY: dist
 build-all:
 	@mkdir -p dist
