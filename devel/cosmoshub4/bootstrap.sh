@@ -13,8 +13,6 @@ GAIA_PLATFORM="linux_amd64"
 GAIA_VERSION="v4.2.1"
 GAIA_GENESIS="https://github.com/cosmos/mainnet/raw/master/genesis.cosmoshub-4.json.gz"
 GAIA_ADDRESS_BOOK="https://quicksync.io/addrbook.cosmos.json"
-GAIA_SNAPSHOT="s3://figment-dev-firehose/cosmoshub-4/snapshots/9080100"
-GAIA_CONFIG="s3://figment-dev-firehose/cosmoshub-4/configs/config.toml"
 
 case $OS_PLATFORM-$OS_ARCH in
   Darwin-x86_64) GAIA_PLATFORM="darwin_amd64" ;;
@@ -50,7 +48,6 @@ if [ ! -d "gaia_home" ]; then
   ./gaiad --home=gaia_home init $(hostname) 2> /dev/null
   rm -f \
     gaia_home/config/genesis.json \
-    gaia_home/config/config.toml \
     gaia_home/config/addrbook.json
 fi
 
@@ -70,8 +67,18 @@ if [ ! -f "gaia_home/config/addrbook.json" ]; then
   wget --quiet -O gaia_home/config/addrbook.json $GAIA_ADDRESS_BOOK
 fi
 
+cat << END >> gaia_home/config/config.toml
+
+#######################################################
+###       Extractor Configuration Options     ###
+#######################################################
+[extractor]
+enabled = true
+output_file = "stdout"
+END
+
 if [ ! -f "firehose.yml" ]; then
-  tee firehose.yml <<-END
+  cat << END >> firehose.yml
 start:
   args:
     - ingestor
