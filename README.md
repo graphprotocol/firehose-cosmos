@@ -19,6 +19,12 @@ make build
 
 You should be able to use the `./build/firehose-tendermint` binary moving forward.
 
+To install the binary globally, run:
+
+```bash
+make install
+```
+
 ## Usage
 
 To view usage and flags, run: `./build/firehose-tendermint help`.
