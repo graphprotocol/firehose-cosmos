@@ -16,8 +16,7 @@ import (
 )
 
 type ConsoleReader struct {
-	lines chan string
-
+	lines  chan string
 	logger *zap.Logger
 	done   chan interface{}
 
@@ -26,12 +25,11 @@ type ConsoleReader struct {
 }
 
 func NewConsoleReader(lines chan string, logger *zap.Logger) (*ConsoleReader, error) {
-	cr := &ConsoleReader{
+	return &ConsoleReader{
 		lines:  lines,
 		logger: logger,
 		done:   make(chan interface{}),
-	}
-	return cr, nil
+	}, nil
 }
 
 func (cr *ConsoleReader) Done() <-chan interface{} {

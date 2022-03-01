@@ -3,6 +3,7 @@ package noderunner
 import (
 	"bufio"
 	"io"
+	"strings"
 
 	"go.uber.org/zap"
 )
@@ -12,6 +13,7 @@ func StartLineReader(input io.Reader, readerFunc func(string), logger *zap.Logge
 
 	for {
 		line, err := reader.ReadString('\n')
+
 		if err != nil {
 			// Abnormal termination
 			if err != io.EOF {
@@ -26,6 +28,6 @@ func StartLineReader(input io.Reader, readerFunc func(string), logger *zap.Logge
 			}
 		}
 
-		readerFunc(line)
+		readerFunc(strings.TrimSpace(line))
 	}
 }

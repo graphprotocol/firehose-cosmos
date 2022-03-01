@@ -39,6 +39,7 @@ func New(bin string, args []string, stderr bool) *NodeRunner {
 		forcedKillTimeout: defaultKillTimeout,
 		bufferSize:        defaultBufferSize,
 		done:              make(chan struct{}),
+		logger:            zap.NewNop(),
 	}
 }
 
