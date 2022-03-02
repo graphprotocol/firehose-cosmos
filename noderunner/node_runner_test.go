@@ -6,11 +6,15 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 func TestNodeRunner(t *testing.T) {
+	logger, _ := zap.NewDevelopment()
+
 	t.Run("basic", func(t *testing.T) {
 		runner := New("true", []string{}, true)
+		runner.SetLogger(logger)
 
 		err := runner.Start(context.Background())
 		assert.Nil(t, err)
@@ -18,6 +22,7 @@ func TestNodeRunner(t *testing.T) {
 
 	t.Run("invalid command", func(t *testing.T) {
 		runner := New("foo", []string{}, true)
+		runner.SetLogger(logger)
 
 		err := runner.Start(context.Background())
 		assert.Error(t, err)
@@ -26,6 +31,7 @@ func TestNodeRunner(t *testing.T) {
 
 	t.Run("with cancel", func(t *testing.T) {
 		runner := New("sleep", []string{"10"}, true)
+		runner.SetLogger(logger)
 
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
 		defer cancel()
@@ -39,6 +45,8 @@ func TestNodeRunner(t *testing.T) {
 		lines := []string{}
 
 		runner := New("echo", []string{"hello", "world"}, true)
+		runner.SetLogger(logger)
+
 		runner.SetLineReader(func(line string) {
 			lines = append(lines, line)
 		})
