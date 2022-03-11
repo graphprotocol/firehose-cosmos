@@ -33,7 +33,7 @@ func TestNodeRunner(t *testing.T) {
 		runner := New("sleep", []string{"10"}, true)
 		runner.SetLogger(logger)
 
-		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*500)
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
 
 		err := runner.Start(ctx)
@@ -44,7 +44,7 @@ func TestNodeRunner(t *testing.T) {
 	t.Run("line reader", func(t *testing.T) {
 		lines := []string{}
 
-		runner := New("echo", []string{"hello", "world"}, true)
+		runner := New("../test/script.sh", []string{}, true)
 		runner.SetLogger(logger)
 
 		runner.SetLineReader(func(line string) {
@@ -53,6 +53,6 @@ func TestNodeRunner(t *testing.T) {
 
 		err := runner.Start(context.Background())
 		assert.NoError(t, err)
-		assert.Equal(t, []string{"hello world"}, lines)
+		assert.Equal(t, []string{"Line 1", "Line 2", "Line 3"}, lines)
 	})
 }

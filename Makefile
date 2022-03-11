@@ -18,6 +18,8 @@ build-all:
 	@rm -f dist/*
 	LDFLAGS="$(LDFLAGS)" ./scripts/buildall.sh
 
+# MallocNanoZone env var fixes panics in racemode on osx
 .PHONY: test
 test:
-	go test -race -cover ./...
+	MallocNanoZone=0 \
+		go test -race -cover ./...
