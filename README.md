@@ -87,6 +87,28 @@ start:
     ingestor-node-env: "KEY=VALUE,KEY=VALUE"
 ```
 
+### Logs input mode
+
+It's possible to run the firehose ingestor from the static logs, mostly for development/testing purposes.
+
+Example config:
+
+```yml
+start:
+  args:
+    - ingestor
+    # ... other services
+  flags:
+    # ... other config options
+
+    # Ingestor specific flags
+    ingestor-mode: logs
+    ingestor-logs-dir: /path/to/logs/dir
+
+    # Configure the pattern if not using .log extension
+    # ingestor-logs-pattern: *.log
+```
+
 ### Service Ports
 
 By default, `firehose-tendermint` will start all available services, each providing a
