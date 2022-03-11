@@ -4,12 +4,14 @@ import (
 	"context"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/streamingfast/dgrpc"
 	"github.com/streamingfast/node-manager/mindreader"
 	"github.com/streamingfast/shutter"
 	"go.uber.org/zap"
 
+	"github.com/figment-networks/firehose-tendermint/filereader"
 	"github.com/figment-networks/firehose-tendermint/noderunner"
 )
 
@@ -18,15 +20,19 @@ type IngestorApp struct {
 
 	mode             string
 	lineBufferSize   int
-	logsDir          string
 	serverListenAddr string
-	nodeBinPath      string
-	nodeDir          string
-	nodeArgs         string
-	nodeEnv          string
+	mrp              *mindreader.MindReaderPlugin
+	server           *dgrpc.Server
 
-	mrp    *mindreader.MindReaderPlugin
-	server *dgrpc.Server
+	// Node runner options
+	nodeBinPath string
+	nodeDir     string
+	nodeArgs    string
+	nodeEnv     string
+
+	// Log reader options
+	logsDir         string
+	logsFilePattern string
 }
 
 func (app *IngestorApp) Terminated() <-chan struct{} {
@@ -99,5 +105,11 @@ func (app *IngestorApp) startFromNode(ctx context.Context) error {
 }
 
 func (app *IngestorApp) startFromLogs(ctx context.Context) error {
-	return nil
+	reader, err := filereader.NewReader(ctx, zlog, 10*time.Second, 10*time.Second, app.logsFilePattern, app.logsDir)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	return reader.StartSendingFilesInQueue(app.mrp.LogLine)
 }
