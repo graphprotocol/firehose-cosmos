@@ -44,6 +44,7 @@ func init() {
 
 		flags.String("ingestor-mode", modeStdin, "Mode of operation, one of (stdin, logs, node)")
 		flags.String("ingestor-logs-dir", "", "Event logs source directory")
+		flags.String("ingestor-logs-pattern", "\\.log(\\.[\\d]+)?", "Logs file pattern")
 		flags.Int("ingestor-line-buffer-size", defaultLineBufferSize, "Buffer size in bytes for the line reader")
 		flags.String("ingestor-working-dir", "{fh-data-dir}/workdir", "Path where mindreader will stores its files")
 		flags.String("ingestor-grpc-listen-addr", BlockStreamServingAddr, "GRPC server listen address")
@@ -145,6 +146,8 @@ func init() {
 			nodeDir:          viper.GetString("ingestor-node-dir"),
 			nodeArgs:         viper.GetString("ingestor-node-args"),
 			nodeEnv:          viper.GetString("ingestor-node-env"),
+			logsDir:          viper.GetString("ingestor-logs-dir"),
+			logsFilePattern:  viper.GetString("ingestor-logs-pattern"),
 			server:           server,
 			serverListenAddr: gprcListenAdrr,
 		}, nil
