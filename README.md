@@ -7,7 +7,7 @@ Firehose integration for Tendermint chains
 To get started, first clone the repository and install all dependencies:
 
 ```bash
-git clone git@github.com:figment-networks/firehose-tendermint.git
+git clone https://github.com/figment-networks/firehose-tendermint.git
 go mod download
 ```
 
