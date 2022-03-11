@@ -10,6 +10,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/streamingfast/bstream"
+	"github.com/streamingfast/bstream/transform"
 	dauthAuthenticator "github.com/streamingfast/dauth/authenticator"
 	_ "github.com/streamingfast/dauth/authenticator/null"
 	"github.com/streamingfast/dlauncher/launcher"
@@ -17,8 +18,6 @@ import (
 	"github.com/streamingfast/dmetrics"
 	firehoseApp "github.com/streamingfast/firehose/app/firehose"
 	"github.com/streamingfast/logging"
-
-	"github.com/figment-networks/firehose-tendermint/codec"
 )
 
 var (
@@ -83,6 +82,8 @@ func init() {
 			grcpShutdownGracePeriod = shutdownSignalDelay - (5 * time.Second)
 		}
 
+		registry := transform.NewRegistry()
+
 		return firehoseApp.New(appLogger,
 			&firehoseApp.Config{
 				BlockStoreURLs:          firehoseBlocksStoreURLs,
@@ -92,11 +93,11 @@ func init() {
 				RealtimeTolerance:       viper.GetDuration("firehose-real-time-tolerance"),
 			},
 			&firehoseApp.Modules{
-				Authenticator:             authenticator,
-				FilterPreprocessorFactory: codec.FilterPreprocessorFactory(),
-				HeadTimeDriftMetric:       headTimeDriftmetric,
-				HeadBlockNumberMetric:     headBlockNumMetric,
-				Tracker:                   tracker,
+				Authenticator:         authenticator,
+				HeadTimeDriftMetric:   headTimeDriftmetric,
+				HeadBlockNumberMetric: headBlockNumMetric,
+				Tracker:               tracker,
+				TransformRegistry:     registry,
 			}), nil
 	}
 
