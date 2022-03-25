@@ -49,6 +49,8 @@ func main() {
 }
 
 func preRun(cmd *cobra.Command, args []string) error {
+	DataDir = viper.GetString("data-dir")
+
 	if launcher.DfuseConfig == nil {
 		launcher.DfuseConfig = map[string]*launcher.DfuseCommandConfig{}
 	}
