@@ -39,6 +39,9 @@ func runStartCommand(cmd *cobra.Command, args []string) error {
 
 	apps := launcher.ParseAppsFromArgs(args, startAppByDefault)
 	if len(args) == 0 {
+		if launcher.DfuseConfig[cmd.Name()] == nil {
+			launcher.DfuseConfig[cmd.Name()] = &launcher.DfuseCommandConfig{}
+		}
 		apps = launcher.ParseAppsFromArgs(launcher.DfuseConfig[cmd.Name()].Args, startAppByDefault)
 	}
 
