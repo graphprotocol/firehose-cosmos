@@ -9,9 +9,10 @@ CLEANUP=${CLEANUP:-"0"}
 OS_PLATFORM=$(uname -s)
 OS_ARCH=$(uname -m)
 
-GAIA_PLATFORM="linux_amd64"
-GAIA_VERSION="v4.2.1"
+GAIA_PLATFORM=${GAIA_PLATFORM:-"linux_amd64"}
+GAIA_VERSION=${GAIA_VERSION:-"v4.2.1"}
 GAIA_GENESIS="https://github.com/cosmos/mainnet/raw/master/genesis.cosmoshub-4.json.gz"
+GAIA_GENESIS_HEIGHT=${GAIA_GENESIS_HEIGHT:-"5200791"}
 GAIA_ADDRESS_BOOK="https://quicksync.io/addrbook.cosmos.json"
 
 case $OS_PLATFORM-$OS_ARCH in
@@ -86,7 +87,7 @@ start:
     - firehose
     - relayer
   flags:
-    common-first-streamable-block: 5200791
+    common-first-streamable-block: $GAIA_GENESIS_HEIGHT
     ingestor-mode: node
     ingestor-node-path: ./gaiad
     ingestor-node-args: start --x-crisis-skip-assert-invariants --home=./gaia_home
