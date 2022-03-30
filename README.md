@@ -109,6 +109,12 @@ start:
     # ingestor-logs-pattern: *.log
 ```
 
+## Supported networks
+
+We provide scripts for running firehose for these networks:
+
+- [Cosmoshub4](devel/cosmoshub4/)
+
 ### Service Ports
 
 By default, `firehose-tendermint` will start all available services, each providing a
