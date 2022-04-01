@@ -26,10 +26,10 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
-	github.com/streamingfast/bstream v0.0.2-0.20220311205756-3937f4d2871e
+	github.com/streamingfast/bstream v0.0.2-0.20220330124346-02408ab3db65
 	github.com/streamingfast/dbin v0.0.0-20210809205249-73d5eca35dc5
 	github.com/streamingfast/dgrpc v0.0.0-20220301153539-536adf71b594
-	github.com/streamingfast/firehose v0.1.1-0.20220311191632-347bfad300b0
+	github.com/streamingfast/firehose v0.1.1-0.20220331194041-2bf2b9689682
 	github.com/streamingfast/merger v0.0.3-0.20220307182136-ea57e6c34740
 	github.com/streamingfast/node-manager v0.0.2-0.20220111134042-8a0db96986a1
 	github.com/streamingfast/pbgo v0.0.6-0.20220304191603-f73822f471ff
@@ -87,7 +87,7 @@ require (
 	github.com/spf13/viper v1.10.1
 	github.com/streamingfast/derr v0.0.0-20210811180100-9138d738bcec
 	github.com/streamingfast/dlauncher v0.0.0-20211210162313-cf4aa5fc4878
-	github.com/streamingfast/sf-tools v0.0.0-20211124191345-bf0c1c2a076a
+	github.com/streamingfast/sf-tools v0.0.0-20220401210238-2ed0d760a4c5
 )
 
 require (
