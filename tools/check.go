@@ -16,10 +16,11 @@ var (
 	}
 
 	checkMergedBlocksCmd = &cobra.Command{
-		Use:   "merged-blocks {store-url}",
-		Short: "Checks for any holes in merged blocks as well as ensuring merged blocks integrity",
-		Args:  cobra.ExactArgs(1),
-		RunE:  checkMergedBlocksE,
+		Use:     "merged-blocks {store-url}",
+		Short:   "Checks for any holes in merged blocks as well as ensuring merged blocks integrity",
+		Args:    cobra.ExactArgs(1),
+		PreRunE: initFirstStreamable,
+		RunE:    checkMergedBlocksE,
 	}
 )
 
