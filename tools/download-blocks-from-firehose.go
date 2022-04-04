@@ -27,6 +27,7 @@ var DownloadFromFirehoseCmd = &cobra.Command{
 	Short:   "download blocks from firehose and save them to merged-blocks",
 	Args:    cobra.ExactArgs(4),
 	RunE:    downloadFromFirehoseE,
+	PreRunE: initFirstStreamable,
 	Example: "firehose-tendermint tools download-from-firehose f.q.d.n:443 1000 2000 ./outputdir",
 }
 

@@ -5,17 +5,12 @@ import (
 
 	"github.com/figment-networks/firehose-tendermint/codec"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
 	Cmd = &cobra.Command{
 		Use:   "tools",
 		Short: "Developer tools",
-		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			codec.SetFirstStreamableBlock(viper.GetUint64("common-first-streamable-block"))
-			return codec.Validate()
-		},
 	}
 )
 
@@ -29,6 +24,10 @@ func init() {
 	checkMergedBlocksCmd.Flags().BoolP("print-full", "f", false, "Natively decode each block and print the full JSON representation of the block, should be used with a small range only if you don't want to be overwhelmed")
 }
 
+func initFirstStreamable(cmd *cobra.Command, args []string) error {
+	codec.SetFirstStreamableBlock(mustGetUint64(cmd, "common-first-streamable-block"))
+	return codec.Validate()
+}
 func mustGetString(cmd *cobra.Command, flagName string) string {
 	val, err := cmd.Flags().GetString(flagName)
 	if err != nil {
