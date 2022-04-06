@@ -60,7 +60,7 @@ require (
 	github.com/Azure/azure-storage-blob-go v0.14.0 // indirect
 	github.com/abourget/llerrgroup v0.0.0-20161118145731-75f536392d17 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/figment-networks/tendermint-protobuf-def v0.1.0
+	github.com/figment-networks/tendermint-protobuf-def v0.1.1-0.20220405172225-516e959559c3
 	github.com/google/renameio v0.1.0 // indirect
 	github.com/klauspost/compress v1.10.2 // indirect
 	github.com/mattn/go-ieproxy v0.0.1 // indirect
