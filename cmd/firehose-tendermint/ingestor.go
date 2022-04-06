@@ -47,6 +47,7 @@ func (app *IngestorApp) Run() error {
 	app.OnTerminating(func(err error) {
 		cancel()
 	})
+
 	app.mrp.OnTerminated(func(err error) {
 		app.Shutdown(err)
 	})
@@ -73,6 +74,7 @@ func (app *IngestorApp) Run() error {
 		}
 
 		zlog.Info("event logs reader finished", zap.Error(err))
+		app.mrp.Stop()
 		app.mrp.Shutdown(err)
 	}()
 
