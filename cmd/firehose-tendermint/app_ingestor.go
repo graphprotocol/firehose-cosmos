@@ -53,6 +53,7 @@ func init() {
 		flags.String("ingestor-node-dir", "", "Node working directory")
 		flags.String("ingestor-node-args", "", "Node process arguments")
 		flags.String("ingestor-node-env", "", "Node process env vars")
+		flags.Duration("ingestor-wait-upload-complete-on-shutdown", 10*time.Second, "When the ingestor is shutting down, it will wait up to that amount of time for the archiver to finish uploading the blocks before leaving anyway")
 
 		return nil
 	}
