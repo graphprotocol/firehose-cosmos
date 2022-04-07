@@ -90,7 +90,7 @@ func (runner *NodeRunner) startProcess(ctx context.Context) error {
 	}
 
 	if runner.stderr {
-		cmd.Stderr = os.Stderr
+		cmd.Stderr = FilteredWriter{Writer: os.Stderr}
 	}
 
 	cmdStdout, err := cmd.StdoutPipe()
