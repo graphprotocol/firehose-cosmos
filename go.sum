@@ -205,6 +205,8 @@ github.com/figment-networks/extractor-tendermint v0.1.0 h1:9LK3mIHz3Vzddakmo4nsq
 github.com/figment-networks/extractor-tendermint v0.1.0/go.mod h1:/qHreXyK7RY+u8ambnQ/ST5f+BaKaLml7+O0KoBbMcE=
 github.com/figment-networks/tendermint-protobuf-def v0.1.0 h1:KzuHL9+0sYeyDNMDLonz/uwZSImD753nbyMsSfp8ynQ=
 github.com/figment-networks/tendermint-protobuf-def v0.1.0/go.mod h1:qOoaNk36CKYukSw9lO9p8EnnSQFPl3ZLq24hcu87EOc=
+github.com/figment-networks/tendermint-protobuf-def v0.1.4-0.20220411140601-89659f1d88a0 h1:W6eO21iRQbKfPqzx/dWj5Wgv8o7LMaVgf29CCXW8+nM=
+github.com/figment-networks/tendermint-protobuf-def v0.1.4-0.20220411140601-89659f1d88a0/go.mod h1:qOoaNk36CKYukSw9lO9p8EnnSQFPl3ZLq24hcu87EOc=
 github.com/form3tech-oss/jwt-go v3.2.2+incompatible h1:TcekIExNqud5crz4xD2pavyTgWiPvpYe4Xau31I0PRk=
 github.com/form3tech-oss/jwt-go v3.2.2+incompatible/go.mod h1:pbq4aXjuKjdthFRnoDwaVPLA+WlJuPGy+QneDUgJi2k=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
