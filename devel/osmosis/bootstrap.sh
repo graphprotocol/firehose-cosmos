@@ -10,15 +10,15 @@ OS_PLATFORM=$(uname -s)
 OS_ARCH=$(uname -m)
 
 OSMOSIS_PLATFORM=${OSMOSIS_PLATFORM:-"linux_amd64"}
-OSMOSIS_VERSION=${OSMOSIS_VERSION:-"v7.0.0"}
+OSMOSIS_VERSION=${OSMOSIS_VERSION:-"v1.0.1"}
 OSMOSIS_GENESIS="https://github.com/osmosis-labs/networks/raw/main/osmosis-1/genesis.json"
 OSMOSIS_GENESIS_HEIGHT=${OSMOSIS_GENESIS_HEIGHT:-"1"}
 OSMOSIS_ADDRESS_BOOK="https://quicksync.io/addrbook.osmosis.json"
 
 case $OS_PLATFORM-$OS_ARCH in
-  Darwin-x86_64) GAIA_PLATFORM="darwin_amd64" ;;
-  Darwin-arm64)  GAIA_PLATFORM="darwin_arm64" ;;
-  Linux-x86_64)  GAIA_PLATFORM="linux_amd64"  ;;
+  Darwin-x86_64) OSMOSIS_PLATFORM="darwin_amd64" ;;
+  Darwin-arm64)  OSMOSIS_PLATFORM="darwin_arm64" ;;
+  Linux-x86_64)  OSMOSIS_PLATFORM="linux_amd64"  ;;
   *) echo "Invalid platform"; exit 1 ;;
 esac
 
@@ -42,7 +42,7 @@ if [ ! -f "osmosisd" ]; then
   echo "Downloading osmosisd $OSMOSIS_VERSION binary"
   #wget --quiet -O ./gaiad "https://github.com/figment-networks/gaia-dm/releases/download/$GAIA_VERSION/gaiad_${GAIA_VERSION}_deepmind_$GAIA_PLATFORM"
   #chmod +x ./gaiad
-  cp /Users/sosedoff/go/src/github.com/osmosis-labs/osmosis/build/osmosisd .
+  cp $GOPATH/src/github.com/osmosis-labs/osmosis/build/osmosisd .
 fi
 
 if [ ! -d "osmosis_home" ]; then
