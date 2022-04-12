@@ -10,12 +10,6 @@ type FilteredWriter struct {
 	dst io.Writer
 }
 
-const (
-	// Regular expression to filter out unwanted logs
-	// NOTE: these wont work when node process runs without "--log_format=json" CLI arg
-	exampleFilterExpr = `"module":"(p2p|pex|consensus|x\/bank)"`
-)
-
 var (
 	decolorizeRe = regexp.MustCompile("[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))")
 )
