@@ -16,6 +16,10 @@ const (
 	exampleFilterExpr = `"module":"(p2p|pex|consensus|x\/bank)"`
 )
 
+var (
+	decolorizeRe = regexp.MustCompile("[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))")
+)
+
 func NewFilteredWriter(dst io.Writer, expr string) (io.Writer, error) {
 	re, err := regexp.Compile(expr)
 	if err != nil {
@@ -26,8 +30,11 @@ func NewFilteredWriter(dst io.Writer, expr string) (io.Writer, error) {
 }
 
 func (w FilteredWriter) Write(data []byte) (int, error) {
-	if w.re.Match(data) {
+	clean := decolorizeRe.ReplaceAll(data, []byte(""))
+	if w.re.Match(clean) {
 		return len(data), nil
 	}
-	return w.dst.Write(data)
+
+	_, err := w.dst.Write(clean)
+	return len(data), err
 }
