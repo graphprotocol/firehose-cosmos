@@ -6,18 +6,28 @@ import (
 )
 
 type FilteredWriter struct {
-	Writer io.Writer
+	re  *regexp.Regexp
+	dst io.Writer
 }
 
-var (
+const (
 	// Regular expression to filter out unwanted logs
 	// NOTE: these wont work when node process runs without "--log_format=json" CLI arg
-	ignoreRegex = regexp.MustCompile(`"module":"(p2p|pex|consensus|x\/bank)"`)
+	exampleFilterExpr = `"module":"(p2p|pex|consensus|x\/bank)"`
 )
 
+func NewFilteredWriter(dst io.Writer, expr string) (io.Writer, error) {
+	re, err := regexp.Compile(expr)
+	if err != nil {
+		return nil, err
+	}
+
+	return FilteredWriter{re: re, dst: dst}, nil
+}
+
 func (w FilteredWriter) Write(data []byte) (int, error) {
-	if ignoreRegex.Match(data) {
+	if w.re.Match(data) {
 		return len(data), nil
 	}
-	return w.Writer.Write(data)
+	return w.dst.Write(data)
 }

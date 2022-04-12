@@ -53,6 +53,7 @@ func init() {
 		flags.String("ingestor-node-dir", "", "Node working directory")
 		flags.String("ingestor-node-args", "", "Node process arguments")
 		flags.String("ingestor-node-env", "", "Node process env vars")
+		flags.String("ingestor-node-filter", "", "Node process log filter expression")
 		flags.Duration("ingestor-wait-upload-complete-on-shutdown", 10*time.Second, "When the ingestor is shutting down, it will wait up to that amount of time for the archiver to finish uploading the blocks before leaving anyway")
 
 		return nil
@@ -147,6 +148,7 @@ func init() {
 			nodeDir:          viper.GetString("ingestor-node-dir"),
 			nodeArgs:         viper.GetString("ingestor-node-args"),
 			nodeEnv:          viper.GetString("ingestor-node-env"),
+			nodeLogsFilter:   viper.GetString("ingestor-node-filter"),
 			logsDir:          viper.GetString("ingestor-logs-dir"),
 			logsFilePattern:  viper.GetString("ingestor-logs-pattern"),
 			server:           server,

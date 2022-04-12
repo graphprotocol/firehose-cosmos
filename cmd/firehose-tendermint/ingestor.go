@@ -25,10 +25,11 @@ type IngestorApp struct {
 	server           *dgrpc.Server
 
 	// Node runner options
-	nodeBinPath string
-	nodeDir     string
-	nodeArgs    string
-	nodeEnv     string
+	nodeBinPath    string
+	nodeDir        string
+	nodeArgs       string
+	nodeEnv        string
+	nodeLogsFilter string
 
 	// Log reader options
 	logsDir         string
@@ -102,6 +103,7 @@ func (app *IngestorApp) startFromNode(ctx context.Context) error {
 	runner.SetLineReader(app.mrp.LogLine)
 	runner.SetDir(app.nodeDir)
 	runner.SetEnv(env)
+	runner.SetLogFiltering(app.nodeLogsFilter)
 
 	return runner.Start(ctx)
 }
