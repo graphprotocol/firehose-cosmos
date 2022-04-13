@@ -30,6 +30,8 @@ type NodeRunner struct {
 	forcedKillTimeout time.Duration
 	logger            *zap.Logger
 	done              chan struct{}
+	logFilter         bool
+	logFilterExpr     string
 }
 
 func New(bin string, args []string, stderr bool) *NodeRunner {
@@ -64,6 +66,12 @@ func (runner *NodeRunner) SetDir(dir string) {
 	runner.dir = dir
 }
 
+func (runner *NodeRunner) SetLogFiltering(expr string) {
+	if expr != "" {
+		runner.logFilterExpr = expr
+	}
+}
+
 func (runner *NodeRunner) Start(ctx context.Context) error {
 	if runner.bin == "" {
 		return errors.New("binary path is not provided")
@@ -75,7 +83,6 @@ func (runner *NodeRunner) Start(ctx context.Context) error {
 
 func (runner *NodeRunner) startProcess(ctx context.Context) error {
 	cmd := exec.Command(runner.bin, runner.args...)
-	cmd.Stderr = nil
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	if len(runner.env) > 0 {
@@ -91,6 +98,14 @@ func (runner *NodeRunner) startProcess(ctx context.Context) error {
 
 	if runner.stderr {
 		cmd.Stderr = os.Stderr
+
+		if runner.logFilterExpr != "" {
+			filterWriter, err := NewFilteredWriter(cmd.Stderr, runner.logFilterExpr)
+			if err != nil {
+				return err
+			}
+			cmd.Stderr = filterWriter
+		}
 	}
 
 	cmdStdout, err := cmd.StdoutPipe()
