@@ -83,8 +83,6 @@ func (runner *NodeRunner) Start(ctx context.Context) error {
 
 func (runner *NodeRunner) startProcess(ctx context.Context) error {
 	cmd := exec.Command(runner.bin, runner.args...)
-	cmd.Stdin = nil
-	cmd.Stderr = nil
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 
 	if len(runner.env) > 0 {

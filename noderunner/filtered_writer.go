@@ -29,6 +29,5 @@ func (w FilteredWriter) Write(data []byte) (int, error) {
 		return len(data), nil
 	}
 
-	_, err := w.dst.Write(clean)
-	return len(data), err
+	return w.dst.Write(data)
 }
