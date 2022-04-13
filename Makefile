@@ -12,7 +12,7 @@ build:
 install:
 	go install -ldflags "$(LDFLAGS)" ./cmd/firehose-tendermint
 
-.PHONY: dist
+.PHONY: build-all
 build-all:
 	@mkdir -p dist
 	@rm -f dist/*
