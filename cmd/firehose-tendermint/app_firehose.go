@@ -46,7 +46,7 @@ func init() {
 
 		// Configure block stream connection (to node or relayer)
 		blockstreamAddr := viper.GetString("common-blockstream-addr")
-		if blockstreamAddr != "" {
+		if blockstreamAddr != "" && blockstreamAddr != "-" {
 			tracker.AddGetter(bstream.BlockStreamLIBTarget, bstream.StreamLIBBlockRefGetter(blockstreamAddr))
 			tracker.AddGetter(bstream.BlockStreamHeadTarget, bstream.StreamHeadBlockRefGetter(blockstreamAddr))
 		}
