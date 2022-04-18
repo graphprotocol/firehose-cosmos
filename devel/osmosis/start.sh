@@ -9,5 +9,5 @@ fi
 
 echo "Starting firehose"
 pushd tmp
-$fh_bin start ingestor # only running node is supported
+$fh_bin start
 popd
