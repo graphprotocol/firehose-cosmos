@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/figment-networks/extractor-tendermint"
-	"github.com/figment-networks/tendermint-protobuf-def/codec"
+	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
 
 	"github.com/streamingfast/bstream"
 	pbbstream "github.com/streamingfast/pbgo/sf/bstream/v1"
@@ -21,7 +21,7 @@ type ConsoleReader struct {
 	done   chan interface{}
 
 	height    uint64
-	lastFrame *codec.EventList
+	lastFrame *pbcodec.EventList
 }
 
 func NewConsoleReader(lines chan string, logger *zap.Logger) (*ConsoleReader, error) {
@@ -64,11 +64,11 @@ func (cr *ConsoleReader) next() (out interface{}, err error) {
 			}
 			return cr.lastFrame, nil
 		case extractor.MsgTx:
-			cr.lastFrame.Transaction = append(cr.lastFrame.Transaction, pl.Data.(*codec.EventTx))
+			cr.lastFrame.Transaction = append(cr.lastFrame.Transaction, pl.Data.(*pbcodec.EventTx))
 		case extractor.MsgBlock:
-			cr.lastFrame = initializeNewFrame(pl.Data.(*codec.EventBlock))
+			cr.lastFrame = initializeNewFrame(pl.Data.(*pbcodec.EventBlock))
 		case extractor.MsgValidatorSetUpdate:
-			cr.lastFrame.ValidatorSetUpdates = pl.Data.(*codec.EventValidatorSetUpdates)
+			cr.lastFrame.ValidatorSetUpdates = pl.Data.(*pbcodec.EventValidatorSetUpdates)
 		}
 	}
 
@@ -86,15 +86,15 @@ func (cr *ConsoleReader) startHeight(height uint64) error {
 	return nil
 }
 
-func initializeNewFrame(nblock *codec.EventBlock) *codec.EventList {
-	return &codec.EventList{
+func initializeNewFrame(nblock *pbcodec.EventBlock) *pbcodec.EventList {
+	return &pbcodec.EventList{
 		NewBlock:    nblock,
-		Transaction: []*codec.EventTx{},
+		Transaction: []*pbcodec.EventTx{},
 	}
 }
 
 func FromProto(b interface{}) (*bstream.Block, error) {
-	eventList, ok := b.(*codec.EventList)
+	eventList, ok := b.(*pbcodec.EventList)
 	if !ok {
 		return nil, fmt.Errorf("unsupported type")
 	}

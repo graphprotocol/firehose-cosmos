@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/proto"
 
-	"github.com/figment-networks/tendermint-protobuf-def/codec"
+	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
 )
 
 func TestParseLine(t *testing.T) {
@@ -17,11 +17,11 @@ func TestParseLine(t *testing.T) {
 
 	want := &ParsedLine{
 		Kind: "BLOCK",
-		Data: &codec.EventBlock{
-			Block: &codec.Block{
-				Header: &codec.Header{
+		Data: &pbcodec.EventBlock{
+			Block: &pbcodec.Block{
+				Header: &pbcodec.Header{
 					Height: 5201079,
-					Time:   &codec.Timestamp{Seconds: 1613653893},
+					Time:   &pbcodec.Timestamp{Seconds: 1613653893},
 				},
 			},
 		},
@@ -67,11 +67,11 @@ func TestParseLine_Errors(t *testing.T) {
 func TestParseData(t *testing.T) {
 	input := "Cg8KDRjfuL0CIgYIpbKnsgI="
 
-	want := &codec.EventBlock{
-		Block: &codec.Block{
-			Header: &codec.Header{
+	want := &pbcodec.EventBlock{
+		Block: &pbcodec.Block{
+			Header: &pbcodec.Header{
 				Height: 5200991,
-				Time:   &codec.Timestamp{Seconds: 642373925},
+				Time:   &pbcodec.Timestamp{Seconds: 642373925},
 			},
 		},
 	}
@@ -80,7 +80,7 @@ func TestParseData(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	got := data.(*codec.EventBlock)
+	got := data.(*pbcodec.EventBlock)
 
 	if diff := cmp.Diff(want, got, cmp.Comparer(proto.Equal)); diff != "" {
 		t.Errorf("parseData(%q) mismatch (-want +got):\n%s", input, diff)
@@ -119,11 +119,11 @@ func TestParseNumber(t *testing.T) {
 
 func TestParseTimestamp(t *testing.T) {
 	examples := []struct {
-		input    *codec.Timestamp
+		input    *pbcodec.Timestamp
 		expected time.Time
 	}{
 		{
-			input: &codec.Timestamp{
+			input: &pbcodec.Timestamp{
 				Seconds: 1613653893,
 				Nanos:   2137,
 			},
