@@ -91,5 +91,6 @@ start:
     ingestor-mode: node
     ingestor-node-path: ./gaiad
     ingestor-node-args: start --x-crisis-skip-assert-invariants --home=./gaia_home
+    ingestor-node-logs-filter: "module=(p2p|pex|consensus|x/bank)"
 END
 fi
