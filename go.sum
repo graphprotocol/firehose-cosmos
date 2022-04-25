@@ -372,6 +372,8 @@ github.com/figment-networks/extractor-tendermint v0.1.0 h1:9LK3mIHz3Vzddakmo4nsq
 github.com/figment-networks/extractor-tendermint v0.1.0/go.mod h1:/qHreXyK7RY+u8ambnQ/ST5f+BaKaLml7+O0KoBbMcE=
 github.com/figment-networks/tendermint-protobuf-def v0.2.0 h1:uWh/sLSrjJ9lTpK6w2qrlgrpSGkEcPkDQZtJ9oMzppU=
 github.com/figment-networks/tendermint-protobuf-def v0.2.0/go.mod h1:qOoaNk36CKYukSw9lO9p8EnnSQFPl3ZLq24hcu87EOc=
+github.com/figment-networks/tendermint-protobuf-def v0.2.1 h1:7rdPvbh8QAAy2qLH/ELb6h/8HYWGwHKD9HVIQgNB1QI=
+github.com/figment-networks/tendermint-protobuf-def v0.2.1/go.mod h1:qOoaNk36CKYukSw9lO9p8EnnSQFPl3ZLq24hcu87EOc=
 github.com/fjl/memsize v0.0.0-20180418122429-ca190fb6ffbc/go.mod h1:VvhXpOYNQvB+uIk2RvXzuaQtkQJzzIx6lSBe1xv7hi0=
 github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod h1:R/bRT+9gY/C5z7JzPU0zXsXHKM4/ayA+zqcVNZzPa1k=
 github.com/form3tech-oss/jwt-go v3.2.2+incompatible h1:TcekIExNqud5crz4xD2pavyTgWiPvpYe4Xau31I0PRk=
