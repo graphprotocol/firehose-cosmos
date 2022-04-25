@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/figment-networks/extractor-tendermint"
-	"github.com/figment-networks/tendermint-protobuf-def/codec"
+	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -63,11 +63,11 @@ func parseData(kind, data string) (interface{}, error) {
 	case extractor.MsgEnd:
 		return parseNumber(data)
 	case extractor.MsgBlock:
-		return parseFromProto(data, &codec.EventBlock{})
+		return parseFromProto(data, &pbcodec.EventBlock{})
 	case extractor.MsgTx:
-		return parseFromProto(data, &codec.EventTx{})
+		return parseFromProto(data, &pbcodec.EventTx{})
 	case extractor.MsgValidatorSetUpdate:
-		return parseFromProto(data, &codec.EventValidatorSetUpdates{})
+		return parseFromProto(data, &pbcodec.EventValidatorSetUpdates{})
 	default:
 		return nil, fmt.Errorf("%w: %s", errUnsupportedKind, kind)
 	}
@@ -77,7 +77,7 @@ func parseNumber(str string) (uint64, error) {
 	return strconv.ParseUint(str, 10, 64)
 }
 
-func parseTimestamp(ts *codec.Timestamp) time.Time {
+func parseTimestamp(ts *pbcodec.Timestamp) time.Time {
 	return time.Unix(ts.Seconds, int64(ts.Nanos)).UTC()
 }
 

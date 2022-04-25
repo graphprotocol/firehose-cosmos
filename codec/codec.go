@@ -6,7 +6,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/figment-networks/tendermint-protobuf-def/codec"
+	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
 	"github.com/streamingfast/bstream"
 	pbbstream "github.com/streamingfast/pbgo/sf/bstream/v1"
 	"google.golang.org/protobuf/proto"
@@ -66,7 +66,7 @@ func blockDecoder(blk *bstream.Block) (interface{}, error) {
 		return nil, fmt.Errorf("cant get block payload: %v", err)
 	}
 
-	sp := &codec.EventList{}
+	sp := &pbcodec.EventList{}
 
 	return sp, proto.Unmarshal(payload, sp)
 }

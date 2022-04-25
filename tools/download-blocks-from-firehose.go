@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/figment-networks/firehose-tendermint/codec"
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/codec"
+	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
 	"github.com/spf13/cobra"
 	"github.com/streamingfast/bstream"
 	sftools "github.com/streamingfast/sf-tools"
