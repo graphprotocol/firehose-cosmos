@@ -84,9 +84,9 @@ if [ ! -f "firehose.yml" ]; then
 start:
   args:
     - ingestor
-    #- merger
-    #- firehose
-    #- relayer
+    - merger
+    - firehose
+    - relayer
   flags:
     common-first-streamable-block: $OSMOSIS_GENESIS_HEIGHT
     ingestor-mode: node
