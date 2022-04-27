@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
+	sftransform "github.com/figment-networks/firehose-tendermint/transform"
 	"github.com/streamingfast/bstream"
 	"github.com/streamingfast/bstream/transform"
 	dauthAuthenticator "github.com/streamingfast/dauth/authenticator"
@@ -16,6 +17,7 @@ import (
 	"github.com/streamingfast/dlauncher/launcher"
 	"github.com/streamingfast/dmetering"
 	"github.com/streamingfast/dmetrics"
+	"github.com/streamingfast/dstore"
 	firehoseApp "github.com/streamingfast/firehose/app/firehose"
 	"github.com/streamingfast/logging"
 )
@@ -35,6 +37,8 @@ func init() {
 		cmd.Flags().StringSlice("firehose-blocks-store-urls", nil, "If non-empty, overrides common-blocks-store-url with a list of blocks stores")
 		cmd.Flags().Duration("firehose-real-time-tolerance", 1*time.Minute, "Firehose will became alive if now - block time is smaller then tolerance")
 		cmd.Flags().Uint64("firehose-tracker-offset", 100, "Number of blocks for the bstream block resolver")
+		cmd.Flags().String("firehose-block-index-url", "", "Firehose block index URL")
+		cmd.Flags().IntSlice("firehose-block-index-sizes", []int{}, "Firehose block index sizes")
 		return nil
 	}
 
@@ -85,15 +89,36 @@ func init() {
 			grcpShutdownGracePeriod = shutdownSignalDelay - (5 * time.Second)
 		}
 
+		indexStoreUrl := viper.GetString("firehose-block-index-url")
+		var indexStore dstore.Store
+		if indexStoreUrl != "" {
+			s, err := dstore.NewStore(indexStoreUrl, "", "", false)
+			if err != nil {
+				return nil, fmt.Errorf("couldn't create an index store: %w", err)
+			}
+			indexStore = s
+		}
+
+		var possibleIndexSizes []uint64
+		for _, size := range viper.GetIntSlice("firehose-block-index-sizes") {
+			if size < 0 {
+				return nil, fmt.Errorf("invalid negative size for firehose-block-index-sizes: %d", size)
+			}
+			possibleIndexSizes = append(possibleIndexSizes, uint64(size))
+		}
+
 		registry := transform.NewRegistry()
+		registry.Register(sftransform.EventFilterFactory(indexStore, possibleIndexSizes))
 
 		return firehoseApp.New(appLogger,
 			&firehoseApp.Config{
-				BlockStoreURLs:          firehoseBlocksStoreURLs,
-				BlockStreamAddr:         blockstreamAddr,
-				GRPCListenAddr:          viper.GetString("firehose-grpc-listen-addr"),
-				GRPCShutdownGracePeriod: grcpShutdownGracePeriod,
-				RealtimeTolerance:       viper.GetDuration("firehose-real-time-tolerance"),
+				BlockStoreURLs:                  firehoseBlocksStoreURLs,
+				BlockStreamAddr:                 blockstreamAddr,
+				GRPCListenAddr:                  viper.GetString("firehose-grpc-listen-addr"),
+				GRPCShutdownGracePeriod:         grcpShutdownGracePeriod,
+				RealtimeTolerance:               viper.GetDuration("firehose-real-time-tolerance"),
+				IrreversibleBlocksIndexStoreURL: indexStoreUrl,
+				IrreversibleBlocksBundleSizes:   possibleIndexSizes,
 			},
 			&firehoseApp.Modules{
 				Authenticator:         authenticator,

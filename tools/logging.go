@@ -6,10 +6,10 @@ import (
 )
 
 var (
-	traceEnabled = logging.IsTraceEnabled("tools", "github.com/figment-networks/firehose-tendermint/tools")
+	traceEnabled = logging.IsTraceEnabled("tools", "tools")
 	zlog         = zap.NewNop()
 )
 
 func init() {
-	logging.Register("github.com/figment-networks/firehose-tendermint/tools", &zlog)
+	logging.Register("tools", &zlog)
 }
