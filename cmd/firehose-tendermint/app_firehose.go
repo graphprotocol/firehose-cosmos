@@ -37,8 +37,8 @@ func init() {
 		cmd.Flags().StringSlice("firehose-blocks-store-urls", nil, "If non-empty, overrides common-blocks-store-url with a list of blocks stores")
 		cmd.Flags().Duration("firehose-real-time-tolerance", 1*time.Minute, "Firehose will became alive if now - block time is smaller then tolerance")
 		cmd.Flags().Uint64("firehose-tracker-offset", 100, "Number of blocks for the bstream block resolver")
-		cmd.Flags().String("firehose-block-index-url", "", "Firehose block index URL")
-		cmd.Flags().IntSlice("firehose-block-index-sizes", []int{}, "Firehose block index sizes")
+		cmd.Flags().String("firehose-block-index-url", "", "If non-empty, will use this URL as a store to load index data used by some transforms")
+		cmd.Flags().IntSlice("firehose-block-index-sizes", []int{100000, 10000, 1000, 100}, "List of sizes for block indices")
 		return nil
 	}
 
