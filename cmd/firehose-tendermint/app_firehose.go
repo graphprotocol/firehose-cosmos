@@ -109,11 +109,13 @@ func init() {
 
 		return firehoseApp.New(appLogger,
 			&firehoseApp.Config{
-				BlockStoreURLs:          firehoseBlocksStoreURLs,
-				BlockStreamAddr:         blockstreamAddr,
-				GRPCListenAddr:          viper.GetString("firehose-grpc-listen-addr"),
-				GRPCShutdownGracePeriod: grcpShutdownGracePeriod,
-				RealtimeTolerance:       viper.GetDuration("firehose-real-time-tolerance"),
+				BlockStoreURLs:                  firehoseBlocksStoreURLs,
+				BlockStreamAddr:                 blockstreamAddr,
+				GRPCListenAddr:                  viper.GetString("firehose-grpc-listen-addr"),
+				GRPCShutdownGracePeriod:         grcpShutdownGracePeriod,
+				RealtimeTolerance:               viper.GetDuration("firehose-real-time-tolerance"),
+				IrreversibleBlocksIndexStoreURL: indexStoreUrl,
+				IrreversibleBlocksBundleSizes:   possibleIndexSizes,
 			},
 			&firehoseApp.Modules{
 				Authenticator:         authenticator,
