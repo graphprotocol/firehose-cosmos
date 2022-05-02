@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/figment-networks/extractor-tendermint"
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
+	"github.com/figment-networks/extractor-cosmos"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 
 	"google.golang.org/protobuf/proto"
 )
@@ -63,11 +63,11 @@ func parseData(kind, data string) (interface{}, error) {
 	case extractor.MsgEnd:
 		return parseNumber(data)
 	case extractor.MsgBlock:
-		return parseFromProto(data, &pbcodec.EventBlock{})
+		return parseFromProto(data, &pbcosmos.Block{})
 	case extractor.MsgTx:
-		return parseFromProto(data, &pbcodec.EventTx{})
+		return parseFromProto(data, &pbcosmos.TxResult{})
 	case extractor.MsgValidatorSetUpdate:
-		return parseFromProto(data, &pbcodec.EventValidatorSetUpdates{})
+		return parseFromProto(data, &pbcosmos.ValidatorSetUpdates{})
 	default:
 		return nil, fmt.Errorf("%w: %s", errUnsupportedKind, kind)
 	}
@@ -77,7 +77,7 @@ func parseNumber(str string) (uint64, error) {
 	return strconv.ParseUint(str, 10, 64)
 }
 
-func parseTimestamp(ts *pbcodec.Timestamp) time.Time {
+func parseTimestamp(ts *pbcosmos.Timestamp) time.Time {
 	return time.Unix(ts.Seconds, int64(ts.Nanos)).UTC()
 }
 

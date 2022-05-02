@@ -1,7 +1,7 @@
 package transform
 
 import (
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/streamingfast/bstream/transform"
 	"github.com/streamingfast/dstore"
 )
@@ -27,14 +27,14 @@ func NewEventTypeIndexer(indexStore dstore.Store, indexSize uint64, startBlock u
 	}
 }
 
-func (i *EventTypeIndexer) ProcessBlock(block *pbcodec.EventList) {
+func (i *EventTypeIndexer) ProcessBlock(block *pbcosmos.Block) {
 	keyMap := make(map[string]bool)
 
-	processEvents(keyMap, block.NewBlock.ResultBeginBlock.Events)
-	processEvents(keyMap, block.NewBlock.ResultEndBlock.Events)
+	processEvents(keyMap, block.ResultBeginBlock.Events)
+	processEvents(keyMap, block.ResultEndBlock.Events)
 
-	for _, tx := range block.Transaction {
-		processEvents(keyMap, tx.TxResult.Result.Events)
+	for _, tx := range block.Transactions {
+		processEvents(keyMap, tx.Result.Events)
 	}
 
 	var keys []string
@@ -42,10 +42,10 @@ func (i *EventTypeIndexer) ProcessBlock(block *pbcodec.EventList) {
 		keys = append(keys, key)
 	}
 
-	i.BlockIndexer.Add(keys, block.NewBlock.Block.Header.Height)
+	i.BlockIndexer.Add(keys, block.Header.Height)
 }
 
-func processEvents(keyMap map[string]bool, events []*pbcodec.Event) {
+func processEvents(keyMap map[string]bool, events []*pbcosmos.Event) {
 	for _, event := range events {
 		keyMap[event.EventType] = true
 	}

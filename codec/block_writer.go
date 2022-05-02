@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	dbinContentType = "CSM" // Cosmos?
+	dbinContentType = "CSM"
 )
 
 type BlockWriter struct {

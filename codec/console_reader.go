@@ -5,9 +5,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/figment-networks/extractor-tendermint"
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
-
+	"github.com/figment-networks/extractor-cosmos"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/streamingfast/bstream"
 	pbbstream "github.com/streamingfast/pbgo/sf/bstream/v1"
 
@@ -20,8 +19,8 @@ type ConsoleReader struct {
 	logger *zap.Logger
 	done   chan interface{}
 
-	height    uint64
-	lastFrame *pbcodec.EventList
+	height uint64
+	block  *pbcosmos.Block
 }
 
 func NewConsoleReader(lines chan string, logger *zap.Logger) (*ConsoleReader, error) {
@@ -62,13 +61,13 @@ func (cr *ConsoleReader) next() (out interface{}, err error) {
 			if cr.height != height {
 				return nil, fmt.Errorf("unexpected end height end: %d", height)
 			}
-			return cr.lastFrame, nil
-		case extractor.MsgTx:
-			cr.lastFrame.Transaction = append(cr.lastFrame.Transaction, pl.Data.(*pbcodec.EventTx))
+			return cr.block, nil
 		case extractor.MsgBlock:
-			cr.lastFrame = initializeNewFrame(pl.Data.(*pbcodec.EventBlock))
+			cr.block = pl.Data.(*pbcosmos.Block)
+		case extractor.MsgTx:
+			cr.block.Transactions = append(cr.block.Transactions, pl.Data.(*pbcosmos.TxResult))
 		case extractor.MsgValidatorSetUpdate:
-			cr.lastFrame.ValidatorSetUpdates = pl.Data.(*pbcodec.EventValidatorSetUpdates)
+			cr.block.ValidatorUpdates = pl.Data.(*pbcosmos.ValidatorSetUpdates).ValidatorUpdates
 		}
 	}
 
@@ -86,42 +85,33 @@ func (cr *ConsoleReader) startHeight(height uint64) error {
 	return nil
 }
 
-func initializeNewFrame(nblock *pbcodec.EventBlock) *pbcodec.EventList {
-	return &pbcodec.EventList{
-		NewBlock:    nblock,
-		Transaction: []*pbcodec.EventTx{},
-	}
-}
-
 func FromProto(b interface{}) (*bstream.Block, error) {
-	eventList, ok := b.(*pbcodec.EventList)
+	block, ok := b.(*pbcosmos.Block)
 	if !ok {
 		return nil, fmt.Errorf("unsupported type")
 	}
 
-	payload, err := proto.Marshal(eventList)
+	payload, err := proto.Marshal(block)
 	if err != nil {
 		return nil, err
 	}
 
-	header := eventList.NewBlock.Block.Header
-
-	block := &bstream.Block{
-		Id:             hex2string(eventList.NewBlock.BlockId.Hash),
-		PreviousId:     hex2string(header.LastBlockId.Hash),
-		Number:         uint64(header.Height),
-		LibNum:         uint64(header.Height - 1),
-		Timestamp:      parseTimestamp(header.Time),
-		PayloadKind:    pbbstream.Protocol_TENDERMINT,
+	blk := &bstream.Block{
+		Id:             hex2string(block.Header.Hash),
+		PreviousId:     hex2string(block.Header.LastBlockId.Hash),
+		Number:         uint64(block.Header.Height),
+		LibNum:         uint64(block.Header.Height - 1),
+		Timestamp:      parseTimestamp(block.Header.Time),
+		PayloadKind:    pbbstream.Protocol_COSMOS,
 		PayloadVersion: 1,
 	}
 
-	if header.Height == bstream.GetProtocolFirstStreamableBlock {
-		block.LibNum = bstream.GetProtocolFirstStreamableBlock
-		block.PreviousId = ""
+	if block.Header.Height == bstream.GetProtocolFirstStreamableBlock {
+		blk.LibNum = bstream.GetProtocolFirstStreamableBlock
+		blk.PreviousId = ""
 	}
 
-	return bstream.GetBlockPayloadSetter(block, payload)
+	return bstream.GetBlockPayloadSetter(blk, payload)
 }
 
 func hex2string(src []byte) string {

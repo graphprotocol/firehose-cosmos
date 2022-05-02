@@ -6,7 +6,7 @@ import (
 	"io"
 	"time"
 
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/streamingfast/bstream"
 	pbbstream "github.com/streamingfast/pbgo/sf/bstream/v1"
 	"google.golang.org/protobuf/proto"
@@ -53,8 +53,8 @@ func blockWriterFactory(writer io.Writer) (bstream.BlockWriter, error) {
 }
 
 func blockDecoder(blk *bstream.Block) (interface{}, error) {
-	if blk.Kind() != pbbstream.Protocol_TENDERMINT {
-		return nil, fmt.Errorf("expected kind %s, got %s", pbbstream.Protocol_TENDERMINT, blk.Kind())
+	if blk.Kind() != pbbstream.Protocol_COSMOS {
+		return nil, fmt.Errorf("expected kind %s, got %s", pbbstream.Protocol_COSMOS, blk.Kind())
 	}
 
 	if blk.Version() != 1 {
@@ -66,7 +66,7 @@ func blockDecoder(blk *bstream.Block) (interface{}, error) {
 		return nil, fmt.Errorf("cant get block payload: %v", err)
 	}
 
-	sp := &pbcodec.EventList{}
+	sp := &pbcosmos.Block{}
 
 	return sp, proto.Unmarshal(payload, sp)
 }

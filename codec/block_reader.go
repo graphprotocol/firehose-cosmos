@@ -24,7 +24,7 @@ func NewBlockReader(reader io.Reader) (out *BlockReader, err error) {
 	}
 
 	Protocol := pbbstream.Protocol(pbbstream.Protocol_value[contentType])
-	if Protocol != pbbstream.Protocol_TENDERMINT && version != 1 {
+	if Protocol != pbbstream.Protocol_COSMOS && version != 1 {
 		return nil, fmt.Errorf("reader only knows about %s block kind at version 1, got %s at version %d", Protocol, contentType, version)
 	}
 
