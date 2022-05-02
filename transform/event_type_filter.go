@@ -9,21 +9,21 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
-	pbtransform "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/transform/v1"
+	pbtransform "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/transform/v1"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 )
 
-var EventFilterMessageName = proto.MessageName(&pbtransform.EventFilter{})
+var EventTypeFilterMessageName = proto.MessageName(&pbtransform.EventTypeFilter{})
 
-func EventFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
+func EventTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
 	return &transform.Factory{
-		Obj: &pbtransform.EventFilter{},
+		Obj: &pbtransform.EventTypeFilter{},
 		NewFunc: func(message *anypb.Any) (transform.Transform, error) {
-			if message.MessageName() != EventFilterMessageName {
-				return nil, fmt.Errorf("expected type url %q, received %q", EventFilterMessageName, message.TypeUrl)
+			if message.MessageName() != EventTypeFilterMessageName {
+				return nil, fmt.Errorf("expected type url %q, received %q", EventTypeFilterMessageName, message.TypeUrl)
 			}
 
-			filter := &pbtransform.EventFilter{}
+			filter := &pbtransform.EventTypeFilter{}
 			err := proto.Unmarshal(message.Value, filter)
 			if err != nil {
 				return nil, fmt.Errorf("unexpected unmarshal error: %w", err)
@@ -38,7 +38,7 @@ func EventFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *t
 				eventTypeMap[acc] = true
 			}
 
-			return &EventFilter{
+			return &EventTypeFilter{
 				EventTypes:         eventTypeMap,
 				possibleIndexSizes: possibleIndexSizes,
 				indexStore:         indexStore,
@@ -47,32 +47,32 @@ func EventFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *t
 	}
 }
 
-type EventFilter struct {
+type EventTypeFilter struct {
 	EventTypes map[string]bool
 
 	indexStore         dstore.Store
 	possibleIndexSizes []uint64
 }
 
-func (p *EventFilter) String() string {
+func (p *EventTypeFilter) String() string {
 	return fmt.Sprintf("%v", p.EventTypes)
 }
 
-func (p *EventFilter) Transform(readOnlyBlk *bstream.Block, in transform.Input) (transform.Output, error) {
-	block := readOnlyBlk.ToProtocol().(*pbcodec.EventList)
+func (p *EventTypeFilter) Transform(readOnlyBlk *bstream.Block, in transform.Input) (transform.Output, error) {
+	block := readOnlyBlk.ToProtocol().(*pbcosmos.Block)
 
-	block.NewBlock.ResultBeginBlock.Events = p.filterEvents(block.NewBlock.ResultBeginBlock.Events)
-	block.NewBlock.ResultEndBlock.Events = p.filterEvents(block.NewBlock.ResultEndBlock.Events)
+	block.ResultBeginBlock.Events = p.filterEvents(block.ResultBeginBlock.Events)
+	block.ResultEndBlock.Events = p.filterEvents(block.ResultEndBlock.Events)
 
-	for _, tx := range block.Transaction {
-		tx.TxResult.Result.Events = p.filterEvents(tx.TxResult.Result.Events)
+	for _, tx := range block.Transactions {
+		tx.Result.Events = p.filterEvents(tx.Result.Events)
 	}
 
 	return block, nil
 }
 
-func (p *EventFilter) filterEvents(events []*pbcodec.Event) []*pbcodec.Event {
-	var outEvents []*pbcodec.Event
+func (p *EventTypeFilter) filterEvents(events []*pbcosmos.Event) []*pbcosmos.Event {
+	var outEvents []*pbcosmos.Event
 
 	for _, event := range events {
 		if p.EventTypes[event.EventType] {
@@ -83,7 +83,7 @@ func (p *EventFilter) filterEvents(events []*pbcodec.Event) []*pbcodec.Event {
 	return outEvents
 }
 
-func (p *EventFilter) GetIndexProvider() bstream.BlockIndexProvider {
+func (p *EventTypeFilter) GetIndexProvider() bstream.BlockIndexProvider {
 	if p.indexStore == nil {
 		return nil
 	}

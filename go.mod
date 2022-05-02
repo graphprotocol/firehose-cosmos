@@ -1,4 +1,4 @@
-module github.com/figment-networks/firehose-tendermint
+module github.com/figment-networks/firehose-cosmos
 
 go 1.17
 
@@ -26,13 +26,13 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
-	github.com/streamingfast/bstream v0.0.2-0.20220330124346-02408ab3db65
+	github.com/streamingfast/bstream v0.0.2-0.20220428192925-5d0312d274f0
 	github.com/streamingfast/dbin v0.0.0-20210809205249-73d5eca35dc5
 	github.com/streamingfast/dgrpc v0.0.0-20220301153539-536adf71b594
 	github.com/streamingfast/firehose v0.1.1-0.20220331194041-2bf2b9689682
 	github.com/streamingfast/merger v0.0.3-0.20220307182136-ea57e6c34740
 	github.com/streamingfast/node-manager v0.0.2-0.20220111134042-8a0db96986a1
-	github.com/streamingfast/pbgo v0.0.6-0.20220304191603-f73822f471ff
+	github.com/streamingfast/pbgo v0.0.6-0.20220428192744-f80aee7d4688
 	github.com/streamingfast/relayer v0.0.2-0.20220307182103-5f4178c54fde
 	github.com/teris-io/shortid v0.0.0-20171029131806-771a37caa5cf // indirect
 	go.opencensus.io v0.23.0 // indirect
@@ -60,7 +60,7 @@ require (
 	github.com/Azure/azure-storage-blob-go v0.14.0 // indirect
 	github.com/abourget/llerrgroup v0.0.0-20161118145731-75f536392d17 // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
-	github.com/figment-networks/tendermint-protobuf-def v0.2.1
+	github.com/figment-networks/proto-cosmos v0.1.0
 	github.com/google/renameio v0.1.0 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/mattn/go-ieproxy v0.0.1 // indirect
@@ -81,7 +81,7 @@ require (
 
 require (
 	github.com/RoaringBitmap/roaring v0.9.4
-	github.com/figment-networks/extractor-tendermint v0.1.0
+	github.com/figment-networks/extractor-cosmos v0.1.0
 	github.com/lithammer/dedent v1.1.0
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
@@ -97,6 +97,7 @@ require (
 	github.com/bits-and-blooms/bitset v1.2.0 // indirect
 	github.com/coreos/go-semver v0.3.0 // indirect
 	github.com/coreos/go-systemd/v22 v22.3.2 // indirect
+	github.com/cosmos/cosmos-proto v1.0.0-alpha7 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dustin/go-humanize v1.0.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/figment-networks/firehose-tendermint/codec"
+	"github.com/figment-networks/firehose-cosmos/codec"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/streamingfast/bstream"

@@ -9,20 +9,18 @@ import (
 	"github.com/stretchr/testify/assert"
 	"google.golang.org/protobuf/proto"
 
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 )
 
 func TestParseLine(t *testing.T) {
-	input := "DMLOG BLOCK Cg8KDRi3ub0CIgYIhc+5gQY="
+	input := "DMLOG BLOCK Cg0Yt7m9AiIGCIXPuYEG"
 
 	want := &ParsedLine{
 		Kind: "BLOCK",
-		Data: &pbcodec.EventBlock{
-			Block: &pbcodec.Block{
-				Header: &pbcodec.Header{
-					Height: 5201079,
-					Time:   &pbcodec.Timestamp{Seconds: 1613653893},
-				},
+		Data: &pbcosmos.Block{
+			Header: &pbcosmos.Header{
+				Height: 5201079,
+				Time:   &pbcosmos.Timestamp{Seconds: 1613653893},
 			},
 		},
 	}
@@ -65,14 +63,12 @@ func TestParseLine_Errors(t *testing.T) {
 }
 
 func TestParseData(t *testing.T) {
-	input := "Cg8KDRjfuL0CIgYIpbKnsgI="
+	input := "Cg0Y37i9AiIGCKWyp7IC"
 
-	want := &pbcodec.EventBlock{
-		Block: &pbcodec.Block{
-			Header: &pbcodec.Header{
-				Height: 5200991,
-				Time:   &pbcodec.Timestamp{Seconds: 642373925},
-			},
+	want := &pbcosmos.Block{
+		Header: &pbcosmos.Header{
+			Height: 5200991,
+			Time:   &pbcosmos.Timestamp{Seconds: 642373925},
 		},
 	}
 
@@ -80,7 +76,7 @@ func TestParseData(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	got := data.(*pbcodec.EventBlock)
+	got := data.(*pbcosmos.Block)
 
 	if diff := cmp.Diff(want, got, cmp.Comparer(proto.Equal)); diff != "" {
 		t.Errorf("parseData(%q) mismatch (-want +got):\n%s", input, diff)
@@ -119,11 +115,11 @@ func TestParseNumber(t *testing.T) {
 
 func TestParseTimestamp(t *testing.T) {
 	examples := []struct {
-		input    *pbcodec.Timestamp
+		input    *pbcosmos.Timestamp
 		expected time.Time
 	}{
 		{
-			input: &pbcodec.Timestamp{
+			input: &pbcosmos.Timestamp{
 				Seconds: 1613653893,
 				Nanos:   2137,
 			},

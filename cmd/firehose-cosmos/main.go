@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/figment-networks/firehose-tendermint/tools"
+	"github.com/figment-networks/firehose-cosmos/tools"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/streamingfast/derr"
@@ -19,8 +19,8 @@ var (
 	allFlags = map[string]bool{}
 
 	rootCmd = &cobra.Command{
-		Use:     "firehose-tendermint",
-		Short:   "Firehose services for Tendermint-based blockchains",
+		Use:     "firehose-cosmos",
+		Short:   "Firehose services for Cosmos blockchains",
 		Version: versionString(),
 	}
 )

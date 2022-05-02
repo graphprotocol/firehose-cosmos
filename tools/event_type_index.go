@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/figment-networks/firehose-tendermint/transform"
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
+	"github.com/figment-networks/firehose-cosmos/transform"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/spf13/cobra"
 	"github.com/streamingfast/bstream"
 	"github.com/streamingfast/bstream/stream"
@@ -144,7 +144,7 @@ func generateEventTypeIdxE(cmd *cobra.Command, args []string) error {
 		if createIrr {
 			irreversibleIndexer.Add(blk)
 		}
-		t.ProcessBlock(blk.ToProtocol().(*pbcodec.EventList))
+		t.ProcessBlock(blk.ToProtocol().(*pbcosmos.Block))
 		return nil
 	})
 

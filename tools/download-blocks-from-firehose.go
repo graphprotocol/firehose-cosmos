@@ -6,8 +6,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/figment-networks/firehose-tendermint/codec"
-	pbcodec "github.com/figment-networks/tendermint-protobuf-def/pb/fig/tendermint/codec/v1"
+	"github.com/figment-networks/firehose-cosmos/codec"
+	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/spf13/cobra"
 	"github.com/streamingfast/bstream"
 	sftools "github.com/streamingfast/sf-tools"
@@ -28,7 +28,7 @@ var DownloadFromFirehoseCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(4),
 	RunE:    downloadFromFirehoseE,
 	PreRunE: initFirstStreamable,
-	Example: "firehose-tendermint tools download-from-firehose f.q.d.n:443 1000 2000 ./outputdir",
+	Example: "firehose-cosmos tools download-from-firehose f.q.d.n:443 1000 2000 ./outputdir",
 }
 
 func downloadFromFirehoseE(cmd *cobra.Command, args []string) error {
@@ -66,7 +66,7 @@ func downloadFromFirehoseE(cmd *cobra.Command, args []string) error {
 }
 
 func decodeAnyPB(in *anypb.Any) (*bstream.Block, error) {
-	block := &pbcodec.EventList{}
+	block := &pbcosmos.Block{}
 	if err := anypb.UnmarshalTo(in, block, proto.UnmarshalOptions{}); err != nil {
 		return nil, fmt.Errorf("unmarshal anypb: %w", err)
 	}

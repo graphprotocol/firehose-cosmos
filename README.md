@@ -1,13 +1,13 @@
-# firehose-tendermint
+# firehose-cosmos
 
-Firehose integration for Tendermint chains
+Firehose integration for Cosmos chains
 
 ## Getting Started
 
 To get started, first clone the repository and install all dependencies:
 
 ```bash
-git clone https://github.com/figment-networks/firehose-tendermint.git
+git clone https://github.com/figment-networks/firehose-cosmos.git
 go mod download
 ```
 
@@ -17,7 +17,7 @@ Once done, let's build the development binary:
 make build
 ```
 
-You should be able to use the `./build/firehose-tendermint` binary moving forward.
+You should be able to use the `./build/firehose-cosmos` binary moving forward.
 
 To install the binary globally, run:
 
@@ -27,13 +27,13 @@ make install
 
 ## Usage
 
-To view usage and flags, run: `./build/firehose-tendermint help`.
+To view usage and flags, run: `./build/firehose-cosmos help`.
 
 ```
-Firehose services for Tendermint-based blockchains
+Firehose services for Cosmos blockchains
 
 Usage:
-  firehose-tendermint [command]
+  firehose-cosmos [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
@@ -54,12 +54,12 @@ Flags:
       --common-startup-delay duration        Delay before launching firehose process
   -c, --config string                        Configuration file for the firehose (default "firehose.yml")
   -d, --data-dir string                      Path to data storage for all components of firehose (default "./fh-data")
-  -h, --help                                 help for firehose-tendermint
+  -h, --help                                 help for firehose-cosmos
       --log-format string                    Logging format (default "text")
   -v, --verbose int                          Enables verbose output (-vvvv for max verbosity) (default 3)
-      --version                              version for firehose-tendermint
+      --version                              version for firehose-cosmos
 
-Use "firehose-tendermint [command] --help" for more information about a command.
+Use "firehose-cosmos [command] --help" for more information about a command.
 ```
 
 ## Configuration
@@ -117,8 +117,7 @@ We provide scripts for running firehose for these networks:
 
 ### Service Ports
 
-By default, `firehose-tendermint` will start all available services, each providing a
-GRPC interface.
+By default, `firehose-cosmos` will start all available services, each providing a GRPC interface.
 
 - `9000` - Ingestor
 - `9010` - Relayer

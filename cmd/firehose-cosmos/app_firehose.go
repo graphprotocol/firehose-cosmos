@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	sftransform "github.com/figment-networks/firehose-tendermint/transform"
+	sftransform "github.com/figment-networks/firehose-cosmos/transform"
 	"github.com/streamingfast/bstream"
 	"github.com/streamingfast/bstream/transform"
 	dauthAuthenticator "github.com/streamingfast/dauth/authenticator"
@@ -108,7 +108,7 @@ func init() {
 		}
 
 		registry := transform.NewRegistry()
-		registry.Register(sftransform.EventFilterFactory(indexStore, possibleIndexSizes))
+		registry.Register(sftransform.EventTypeFilterFactory(indexStore, possibleIndexSizes))
 
 		return firehoseApp.New(appLogger,
 			&firehoseApp.Config{

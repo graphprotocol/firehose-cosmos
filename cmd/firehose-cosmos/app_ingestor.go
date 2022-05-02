@@ -24,7 +24,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	"github.com/figment-networks/firehose-tendermint/codec"
+	"github.com/figment-networks/firehose-cosmos/codec"
 )
 
 const (
