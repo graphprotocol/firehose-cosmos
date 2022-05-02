@@ -11,8 +11,8 @@ import (
 	"github.com/streamingfast/shutter"
 	"go.uber.org/zap"
 
-	"github.com/figment-networks/firehose-tendermint/filereader"
-	"github.com/figment-networks/firehose-tendermint/noderunner"
+	"github.com/figment-networks/firehose-cosmos/filereader"
+	"github.com/figment-networks/firehose-cosmos/noderunner"
 )
 
 type IngestorApp struct {

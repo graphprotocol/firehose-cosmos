@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-fh_bin="firehose-tendermint"
+fh_bin="firehose-cosmos"
 
 if [[ -z $(which $fh_bin || true) ]]; then
   echo "You must install the firehose-binary first. See README for instructions"

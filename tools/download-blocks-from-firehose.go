@@ -6,7 +6,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/figment-networks/firehose-tendermint/codec"
+	"github.com/figment-networks/firehose-cosmos/codec"
 	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/spf13/cobra"
 	"github.com/streamingfast/bstream"
@@ -28,7 +28,7 @@ var DownloadFromFirehoseCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(4),
 	RunE:    downloadFromFirehoseE,
 	PreRunE: initFirstStreamable,
-	Example: "firehose-tendermint tools download-from-firehose f.q.d.n:443 1000 2000 ./outputdir",
+	Example: "firehose-cosmos tools download-from-firehose f.q.d.n:443 1000 2000 ./outputdir",
 }
 
 func downloadFromFirehoseE(cmd *cobra.Command, args []string) error {

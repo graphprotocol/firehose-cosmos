@@ -1,16 +1,16 @@
-PKG          ?= github.com/figment-networks/firehose-tendermint
+PKG          ?= github.com/figment-networks/firehose-cosmos
 BUILD_COMMIT ?= $(shell git rev-parse HEAD)
 BUILD_TIME   ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ" | tr -d '\n')
-BUILD_PATH   ?= firehose-tendermint
+BUILD_PATH   ?= firehose-cosmos
 LDFLAGS      ?= -s -w -X main.BuildCommit=$(BUILD_COMMIT) -X main.BuildTime=$(BUILD_TIME)
 
 .PHONY: build
 build:
-	go build -o build/firehose-tendermint -ldflags "$(LDFLAGS)" ./cmd/firehose-tendermint
+	go build -o build/firehose-cosmos -ldflags "$(LDFLAGS)" ./cmd/firehose-cosmos
 
 .PHONY: install
 install:
-	go install -ldflags "$(LDFLAGS)" ./cmd/firehose-tendermint
+	go install -ldflags "$(LDFLAGS)" ./cmd/firehose-cosmos
 
 .PHONY: build-all
 build-all:

@@ -1,4 +1,4 @@
-module github.com/figment-networks/firehose-tendermint
+module github.com/figment-networks/firehose-cosmos
 
 go 1.17
 

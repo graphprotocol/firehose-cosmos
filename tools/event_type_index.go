@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/figment-networks/firehose-tendermint/transform"
+	"github.com/figment-networks/firehose-cosmos/transform"
 	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/spf13/cobra"
 	"github.com/streamingfast/bstream"
