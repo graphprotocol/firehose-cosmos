@@ -13,14 +13,14 @@ import (
 	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 )
 
-var EventFilterMessageName = proto.MessageName(&pbtransform.EventTypeFilter{})
+var EventTypeFilterMessageName = proto.MessageName(&pbtransform.EventTypeFilter{})
 
-func EventFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
+func EventTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
 	return &transform.Factory{
 		Obj: &pbtransform.EventTypeFilter{},
 		NewFunc: func(message *anypb.Any) (transform.Transform, error) {
-			if message.MessageName() != EventFilterMessageName {
-				return nil, fmt.Errorf("expected type url %q, received %q", EventFilterMessageName, message.TypeUrl)
+			if message.MessageName() != EventTypeFilterMessageName {
+				return nil, fmt.Errorf("expected type url %q, received %q", EventTypeFilterMessageName, message.TypeUrl)
 			}
 
 			filter := &pbtransform.EventTypeFilter{}
@@ -38,7 +38,7 @@ func EventFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *t
 				eventTypeMap[acc] = true
 			}
 
-			return &EventFilter{
+			return &EventTypeFilter{
 				EventTypes:         eventTypeMap,
 				possibleIndexSizes: possibleIndexSizes,
 				indexStore:         indexStore,
@@ -47,18 +47,18 @@ func EventFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *t
 	}
 }
 
-type EventFilter struct {
+type EventTypeFilter struct {
 	EventTypes map[string]bool
 
 	indexStore         dstore.Store
 	possibleIndexSizes []uint64
 }
 
-func (p *EventFilter) String() string {
+func (p *EventTypeFilter) String() string {
 	return fmt.Sprintf("%v", p.EventTypes)
 }
 
-func (p *EventFilter) Transform(readOnlyBlk *bstream.Block, in transform.Input) (transform.Output, error) {
+func (p *EventTypeFilter) Transform(readOnlyBlk *bstream.Block, in transform.Input) (transform.Output, error) {
 	block := readOnlyBlk.ToProtocol().(*pbcosmos.Block)
 
 	block.ResultBeginBlock.Events = p.filterEvents(block.ResultBeginBlock.Events)
@@ -71,7 +71,7 @@ func (p *EventFilter) Transform(readOnlyBlk *bstream.Block, in transform.Input) 
 	return block, nil
 }
 
-func (p *EventFilter) filterEvents(events []*pbcosmos.Event) []*pbcosmos.Event {
+func (p *EventTypeFilter) filterEvents(events []*pbcosmos.Event) []*pbcosmos.Event {
 	var outEvents []*pbcosmos.Event
 
 	for _, event := range events {
@@ -83,7 +83,7 @@ func (p *EventFilter) filterEvents(events []*pbcosmos.Event) []*pbcosmos.Event {
 	return outEvents
 }
 
-func (p *EventFilter) GetIndexProvider() bstream.BlockIndexProvider {
+func (p *EventTypeFilter) GetIndexProvider() bstream.BlockIndexProvider {
 	if p.indexStore == nil {
 		return nil
 	}
