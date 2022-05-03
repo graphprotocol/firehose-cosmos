@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-NAME=$(basename $(pwd))
+NAME=firehose-cosmos
 TARGETS="linux_amd64 linux_arm64 darwin_amd64 darwin_arm64"
 
 for target in $TARGETS; do
