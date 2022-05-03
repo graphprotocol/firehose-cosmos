@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -o errexit
-set -o nounset
 set -o pipefail
 
 CLEANUP=${CLEANUP:-"0"}
@@ -40,7 +39,7 @@ echo "Your platform is $OS_PLATFORM/$OS_ARCH"
 
 if [ ! -f "gaiad" ]; then
   echo "Downloading gaiad $GAIA_VERSION binary"
-  wget --quiet -O ./gaiad "https://github.com/figment-networks/gaia-dm/releases/download/$GAIA_VERSION/gaiad_${GAIA_VERSION}_deepmind_$GAIA_PLATFORM"
+  wget -O ./gaiad "https://github.com/figment-networks/gaia-dm/releases/download/$GAIA_VERSION/gaiad_${GAIA_VERSION}_firehose_$GAIA_PLATFORM"
   chmod +x ./gaiad
 fi
 
@@ -92,5 +91,8 @@ start:
     ingestor-node-path: ./gaiad
     ingestor-node-args: start --x-crisis-skip-assert-invariants --home=./gaia_home
     ingestor-node-logs-filter: "module=(p2p|pex|consensus|x/bank)"
+    firehose-real-time-tolerance: 99999h
+    relayer-max-source-latency: 99999h
+    verbose: 1
 END
 fi
