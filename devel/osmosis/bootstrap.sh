@@ -41,9 +41,9 @@ echo "Your platform is $OS_PLATFORM/$OS_ARCH"
 
 if [ ! -f "$OSMOSIS_PATH" ]; then
   echo "NOTE: Downloading instrumented binaries is not implemented yet"
-  # echo "Downloading osmosisd $OSMOSIS_VERSION binary"
-  #wget --quiet -O ./gaiad "https://github.com/figment-networks/osmisis-dm/releases/download/$OSMOSIS_VERSION/gaiad_${OSMOSIS_VERSION}_deepmind_$OSMOSIS_PLATFORM"
-  #chmod +x ./gaiad
+  echo "Downloading osmosisd $OSMOSIS_VERSION binary"
+  wget --quiet -O ./osmosisd "https://github.com/figment-networks/osmisis-dm/releases/download/$OSMOSIS_VERSION/gaiad_${OSMOSIS_VERSION}_deepmind_$OSMOSIS_PLATFORM"
+  chmod +x ./osmosisd
 fi
 
 if [[ -z $(which osmosisd || true) ]]; then
