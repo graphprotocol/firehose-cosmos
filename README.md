@@ -25,6 +25,8 @@ To install the binary globally, run:
 make install
 ```
 
+Alternatively, use a prebuilt binary from [Releases Page](https://github.com/figment-networks/firehose-cosmos/releases)
+ 
 ## Usage
 
 To view usage and flags, run: `./build/firehose-cosmos help`.
