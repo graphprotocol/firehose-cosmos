@@ -5,4 +5,5 @@ fh-data
 dist/
 build/
 firehose.yml
+firehose-*.yml
 .vscode/
