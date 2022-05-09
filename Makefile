@@ -31,6 +31,7 @@ test:
 docker-build:
 	docker build \
 		--platform linux/amd64 \
+		--build-arg VERSION=$(VERSION) \
 		-t ${DOCKER_IMAGE}:${DOCKER_TAG} \
 		.
 

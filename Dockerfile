@@ -12,10 +12,12 @@ RUN go mod download
 
 COPY . .
 
+ARG VERSION
 ENV CGO_ENABLED=0
 ENV GOARCH=amd64
 ENV GOOS=linux
 
+RUN git reset --hard && git checkout v${VERSION}
 RUN make build
 
 # ------------------------------------------------------------------------------
