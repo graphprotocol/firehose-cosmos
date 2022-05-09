@@ -2,8 +2,6 @@ module github.com/figment-networks/firehose-cosmos
 
 go 1.17
 
-// replace github.com/figment-networks/proto-cosmos => /Users/markpreston/code/figment/graph-cosmos/proto-cosmos
-
 require (
 	cloud.google.com/go v0.100.2 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.8 // indirect
