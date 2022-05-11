@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 	"sync"
@@ -42,9 +43,17 @@ func rpcHeadTracker(endpoint string) bstream.BlockRefGetter {
 		}
 		defer resp.Body.Close()
 
+		if resp.StatusCode >= 400 {
+			return nil, fmt.Errorf("endpoint returned status code %v", resp.StatusCode)
+		}
+
 		status := statusResponse{}
 		if err := json.NewDecoder(resp.Body).Decode(&status); err != nil {
 			return nil, err
+		}
+
+		if status.Result.SyncInfo.LatestBlockHeight == "" {
+			return nil, fmt.Errorf("latest block height is not available")
 		}
 
 		height, err := strconv.Atoi(status.Result.SyncInfo.LatestBlockHeight)
