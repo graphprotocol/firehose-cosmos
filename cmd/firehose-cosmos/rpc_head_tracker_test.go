@@ -31,11 +31,6 @@ func TestRPCHeadTracker(t *testing.T) {
 }`
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/bad" {
-			w.WriteHeader(400)
-			return
-		}
-
 		switch r.URL.Path {
 		case "/bad":
 			w.WriteHeader(400)
