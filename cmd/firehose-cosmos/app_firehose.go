@@ -39,6 +39,7 @@ func init() {
 		cmd.Flags().Uint64("firehose-tracker-offset", 100, "Number of blocks for the bstream block resolver")
 		cmd.Flags().String("firehose-block-index-url", "", "If non-empty, will use this URL as a store to load index data used by some transforms")
 		cmd.Flags().IntSlice("firehose-block-index-sizes", []int{100000, 10000, 1000, 100}, "List of sizes for block indices")
+		cmd.Flags().String("firehose-rpc-head-tracker-url", "", "If non-empty, will use this URL to make RPC calls to status endpoint")
 		return nil
 	}
 
@@ -56,6 +57,12 @@ func init() {
 		if blockstreamAddr != "" {
 			tracker.AddGetter(bstream.BlockStreamLIBTarget, bstream.StreamLIBBlockRefGetter(blockstreamAddr))
 			tracker.AddGetter(bstream.BlockStreamHeadTarget, bstream.StreamHeadBlockRefGetter(blockstreamAddr))
+		}
+
+		// Enable HEAD tracker when block stream is not available, to allow firehose to serve static data
+		rpcHeadTrackerURL := viper.GetString("firehose-rpc-head-tracker-url")
+		if rpcHeadTrackerURL != "" && blockstreamAddr == "" {
+			tracker.AddGetter(bstream.BlockStreamHeadTarget, rpcHeadTracker(rpcHeadTrackerURL))
 		}
 
 		// Configure authentication (default is no auth)
