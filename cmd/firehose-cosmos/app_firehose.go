@@ -67,8 +67,9 @@ func init() {
 			tracker.AddGetter(bstream.BlockStreamHeadTarget, rpcHeadTracker(rpcHeadTrackerURL))
 		}
 
+		// Enable HEAD tracker that returns a static block ref value
 		staticHeadTrackerVal := viper.GetString("firehose-static-head-tracker")
-		if staticHeadTrackerVal != "" {
+		if staticHeadTrackerVal != "" && blockstreamAddr == "" && rpcHeadTrackerURL == "" {
 			parts := strings.SplitN(staticHeadTrackerVal, ":", 2)
 
 			height, err := strconv.Atoi(parts[0])
