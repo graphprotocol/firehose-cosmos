@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -40,6 +41,7 @@ func init() {
 		cmd.Flags().String("firehose-block-index-url", "", "If non-empty, will use this URL as a store to load index data used by some transforms")
 		cmd.Flags().IntSlice("firehose-block-index-sizes", []int{100000, 10000, 1000, 100}, "List of sizes for block indices")
 		cmd.Flags().String("firehose-rpc-head-tracker-url", "", "If non-empty, will use this URL to make RPC calls to status endpoint")
+		cmd.Flags().String("firehose-static-head-tracker", "", "If non-empty, will use this static block height in tracker")
 		return nil
 	}
 
@@ -63,6 +65,18 @@ func init() {
 		rpcHeadTrackerURL := viper.GetString("firehose-rpc-head-tracker-url")
 		if rpcHeadTrackerURL != "" && blockstreamAddr == "" {
 			tracker.AddGetter(bstream.BlockStreamHeadTarget, rpcHeadTracker(rpcHeadTrackerURL))
+		}
+
+		staticHeadTrackerVal := viper.GetString("firehose-static-head-tracker")
+		if staticHeadTrackerVal != "" {
+			parts := strings.SplitN(staticHeadTrackerVal, ":", 2)
+
+			height, err := strconv.Atoi(parts[0])
+			if err != nil {
+				return nil, err
+			}
+
+			tracker.AddGetter(bstream.BlockStreamHeadTarget, staticHeadTracker(uint64(height), parts[1]))
 		}
 
 		// Configure authentication (default is no auth)
