@@ -39,7 +39,7 @@ func MessageTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint
 			}
 
 			return &MessageTypeFilter{
-				MessageTypes:         messageTypeMap,
+				MessageTypes:       messageTypeMap,
 				possibleIndexSizes: possibleIndexSizes,
 				indexStore:         indexStore,
 			}, nil
@@ -72,7 +72,7 @@ func (p *MessageTypeFilter) filterMessages(messages []*anypb.Any) []*anypb.Any {
 	var outMessages []*anypb.Any
 
 	for _, message := range messages {
-		if p.MessageTypes[message.GetTypeUrl()] {
+		if p.MessageTypes[message.TypeUrl] {
 			outMessages = append(outMessages, message)
 		}
 	}

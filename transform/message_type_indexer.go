@@ -41,6 +41,6 @@ func (i *MessageTypeIndexer) ProcessBlock(block *pbcosmos.Block) {
 
 func processMessages(keyMap map[string]bool, messages []*anypb.Any) {
 	for _, message := range messages {
-		keyMap[message.GetTypeUrl()] = true
+		keyMap[message.TypeUrl] = true
 	}
 }
