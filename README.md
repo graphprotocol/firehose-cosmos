@@ -26,7 +26,7 @@ make install
 ```
 
 Alternatively, use a prebuilt binary from [Releases Page](https://github.com/figment-networks/firehose-cosmos/releases)
- 
+
 ## Usage
 
 To view usage and flags, run: `./build/firehose-cosmos help`.
@@ -116,6 +116,7 @@ start:
 We provide scripts for running firehose for these networks:
 
 - [Cosmoshub4](devel/cosmoshub4/)
+- [Osmosis1](devel/osmosis1/)
 
 ### Service Ports
 
