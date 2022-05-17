@@ -116,7 +116,6 @@ func init() {
 
 		registry := transform.NewRegistry()
 		registry.Register(sftransform.EventTypeFilterFactory(indexStore, possibleIndexSizes))
-		registry.Register(sftransform.MessageTypeFilterFactory(indexStore, possibleIndexSizes))
 
 		return firehoseApp.New(appLogger,
 			&firehoseApp.Config{
