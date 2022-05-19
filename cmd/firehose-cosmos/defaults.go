@@ -15,7 +15,7 @@ var (
 	RelayerServingAddr      = "0.0.0.0:9010"
 	MergerServingAddr       = "0.0.0.0:9020"
 	FirehoseGRPCServingAddr = "0.0.0.0:9030"
-	MetricsServingAddr      = "localhost:9102"
+	MetricsServingAddr      = "0.0.0.0:9102"
 
 	// Blocks store
 	MergedBlocksStoreURL string = "file://{fh-data-dir}/storage/merged-blocks"
