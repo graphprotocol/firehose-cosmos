@@ -15,6 +15,7 @@ var (
 	RelayerServingAddr      = "0.0.0.0:9010"
 	MergerServingAddr       = "0.0.0.0:9020"
 	FirehoseGRPCServingAddr = "0.0.0.0:9030"
+	MetricsServingAddr      = "0.0.0.0:9102"
 
 	// Blocks store
 	MergedBlocksStoreURL string = "file://{fh-data-dir}/storage/merged-blocks"
@@ -32,11 +33,15 @@ func init() {
 }
 
 func initCommonFlags(flags *pflag.FlagSet) {
-	// Logging
+	// General
 	flags.IntP("verbose", "v", 3, "Enables verbose output (-vvvv for max verbosity)")
 	flags.String("log-format", "text", "Logging format")
 	flags.StringP("config", "c", "firehose.yml", "Configuration file for the firehose")
 	flags.StringP("data-dir", "d", DataDir, "Path to data storage for all components of firehose")
+
+	// Analytics, metrics
+	flags.String("metrics-listen-addr", MetricsServingAddr, "If non-empty, the process will listen on this address to server Prometheus metrics")
+	flags.String("pprof-listen-addr", "", "If non-empty, the process will listen on this address for pprof analysis (see https://golang.org/pkg/net/http/pprof/)")
 
 	// Common stores configuration flags
 	flags.String("common-blocks-store-url", MergedBlocksStoreURL, "Store URL (with prefix) where to read/write")
