@@ -86,6 +86,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 	})
 
 	launcher.SetupTracing()
+	launcher.SetupAnalyticsMetrics(viper.GetString("metrics-listen-addr"), viper.GetString("pprof-listen-addr"))
 
 	return nil
 }
