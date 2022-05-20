@@ -3,7 +3,7 @@ BUILD_COMMIT ?= $(shell git rev-parse HEAD)
 BUILD_TIME   ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ" | tr -d '\n')
 BUILD_PATH   ?= firehose-cosmos
 LDFLAGS      ?= -s -w -X main.BuildCommit=$(BUILD_COMMIT) -X main.BuildTime=$(BUILD_TIME)
-VERSION      ?= 0.3.0
+VERSION      ?= 0.4.0
 DOCKER_IMAGE ?= figmentnetworks/firehose-cosmos
 DOCKER_TAG   ?= ${VERSION}
 
