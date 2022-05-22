@@ -20,7 +20,7 @@ func EventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint
 		Obj: &pbtransform.EventOriginFilter{},
 		NewFunc: func(message *anypb.Any) (transform.Transform, error) {
 			if message.MessageName() != EventOriginFilterMessageName {
-				return nil, fmt.Errorf("expected type url %q, received %q", EventOriginFilterMessageName, message.TypeUrl) // double check this
+				return nil, fmt.Errorf("expected type url %q, received %q", EventOriginFilterMessageName, message.TypeUrl)
 			}
 
 			filter := &pbtransform.EventOriginFilter{}
@@ -29,12 +29,12 @@ func EventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint
 				return nil, fmt.Errorf("unexpected unmarshal error: %w", err)
 			}
 
-			if len(filter.EventOrigin) == 0 {
+			if len(filter.EventOrigins) == 0 {
 				return nil, fmt.Errorf("event origin filter requires at least one event origin")
 			}
 
 			eventOriginMap := make(map[string]bool)
-			for _, acc := range filter.EventOrigin {
+			for _, acc := range filter.EventOrigins {
 				eventOriginMap[acc] = true
 			}
 
@@ -68,6 +68,7 @@ func (p *EventOriginFilter) Transform(readOnlyBlk *bstream.Block, in transform.I
 
 func (p *EventOriginFilter) filterEventsOrigins(block *pbcosmos.Block) *pbcosmos.Block {
 
+	// if filter doesn't pass these Event Origins, nullify the objects in the block
 	if p.EventOrigins["BeginBlock"] == false {
 		block.ResultBeginBlock.Events = []*pbcosmos.Event{}
 	}
@@ -90,7 +91,7 @@ func (p *EventOriginFilter) GetIndexProvider() bstream.BlockIndexProvider {
 		return nil
 	}
 
-	return NewEventTypeIndexProvider(
+	return NewEventOriginIndexProvider(
 		p.indexStore,
 		p.possibleIndexSizes,
 		p.EventOrigins,
