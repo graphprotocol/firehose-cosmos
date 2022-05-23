@@ -9,5 +9,5 @@ fi
 
 echo "Starting firehose"
 pushd tmp
-$fh_bin start
+$fh_bin start --substreams-enabled=true
 popd

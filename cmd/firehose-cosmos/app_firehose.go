@@ -20,6 +20,7 @@ import (
 	"github.com/streamingfast/dstore"
 	firehoseApp "github.com/streamingfast/firehose/app/firehose"
 	"github.com/streamingfast/logging"
+	substreamsService "github.com/streamingfast/substreams/service"
 )
 
 var (
@@ -40,6 +41,10 @@ func init() {
 		cmd.Flags().String("firehose-block-index-url", "", "If non-empty, will use this URL as a store to load index data used by some transforms")
 		cmd.Flags().IntSlice("firehose-block-index-sizes", []int{100000, 10000, 1000, 100}, "List of sizes for block indices")
 		cmd.Flags().String("firehose-rpc-head-tracker-url", "", "If non-empty, will use this URL to make RPC calls to status endpoint")
+		cmd.Flags().Bool("substreams-enabled", false, "Whether to enable substreams")
+		cmd.Flags().Bool("substreams-partial-mode-enabled", false, "Whether to enable partial stores generation support on this instance (usually for internal deployments only)")
+		cmd.Flags().String("substreams-state-store-url", "./localdata", "where substreams state data are stored")
+		cmd.Flags().Uint64("substreams-stores-save-interval", uint64(10000), "Interval in blocks at which to save store snapshots")
 		return nil
 	}
 
@@ -117,6 +122,29 @@ func init() {
 		registry := transform.NewRegistry()
 		registry.Register(sftransform.EventTypeFilterFactory(indexStore, possibleIndexSizes))
 
+		var registerServiceExt firehoseApp.RegisterServiceExtensionFunc
+		if viper.GetBool("substreams-enabled") {
+			stateStore, err := dstore.NewStore(viper.GetString("substreams-state-store-url"), "", "", false)
+			if err != nil {
+				return nil, fmt.Errorf("setting up state store for data: %w", err)
+			}
+
+			opts := []substreamsService.Option{
+				substreamsService.WithStoresSaveInterval(viper.GetUint64("substreams-stores-save-interval")),
+			}
+
+			if viper.GetBool("substreams-partial-mode-enabled") {
+				opts = append(opts, substreamsService.WithPartialMode())
+			}
+			sss := substreamsService.New(
+				stateStore,
+				"sf.cosmos.type.v1.Block",
+				opts...,
+			)
+
+			registerServiceExt = sss.Register
+		}
+
 		return firehoseApp.New(appLogger,
 			&firehoseApp.Config{
 				BlockStoreURLs:                  firehoseBlocksStoreURLs,
@@ -128,11 +156,12 @@ func init() {
 				IrreversibleBlocksBundleSizes:   possibleIndexSizes,
 			},
 			&firehoseApp.Modules{
-				Authenticator:         authenticator,
-				HeadTimeDriftMetric:   headTimeDriftmetric,
-				HeadBlockNumberMetric: headBlockNumMetric,
-				Tracker:               tracker,
-				TransformRegistry:     registry,
+				Authenticator:            authenticator,
+				HeadTimeDriftMetric:      headTimeDriftmetric,
+				HeadBlockNumberMetric:    headBlockNumMetric,
+				Tracker:                  tracker,
+				TransformRegistry:        registry,
+				RegisterServiceExtension: registerServiceExt,
 			}), nil
 	}
 
