@@ -59,9 +59,7 @@ func (p *EventOriginFilter) String() string {
 }
 
 func (p *EventOriginFilter) Transform(readOnlyBlk *bstream.Block, in transform.Input) (transform.Output, error) {
-	block := readOnlyBlk.ToProtocol().(*pbcosmos.Block)
-
-	block = p.filterEventsOrigins(block)
+	block := p.filterEventsOrigins(readOnlyBlk.ToProtocol().(*pbcosmos.Block))
 
 	return block, nil
 }
@@ -69,14 +67,16 @@ func (p *EventOriginFilter) Transform(readOnlyBlk *bstream.Block, in transform.I
 func (p *EventOriginFilter) filterEventsOrigins(block *pbcosmos.Block) *pbcosmos.Block {
 
 	// if filter doesn't pass these Event Origins, nullify the objects in the block
-	if p.EventOrigins["BeginBlock"] == false {
+	if !p.EventOrigins["BeginBlock"] {
 		block.ResultBeginBlock.Events = []*pbcosmos.Event{}
 	}
-	if p.EventOrigins["EndBlock"] == false {
+	if !p.EventOrigins["EndBlock"] {
 		block.ResultEndBlock.Events = []*pbcosmos.Event{}
 	}
-	if p.EventOrigins["DeliverTx"] == false {
-		block.Transactions = []*pbcosmos.TxResult{}
+	if !p.EventOrigins["DeliverTx"] {
+		for _, tx := range block.Transactions {
+			tx.Result.Events = []*pbcosmos.Event{}
+		}
 	}
 
 	return block

@@ -26,8 +26,11 @@ func NewEventOriginIndexer(indexStore dstore.Store, indexSize uint64, startBlock
 func (i *EventOriginIndexer) ProcessBlock(block *pbcosmos.Block) {
 	keyMap := make(map[string]bool)
 
-	if len(block.Transactions) > 0 {
-		keyMap["DeliverTx"] = true
+	for _, tx := range block.Transactions {
+		if len(tx.Result.Events) > 0 {
+			keyMap["DeliverTx"] = true
+			break
+		}
 	}
 
 	if len(block.ResultBeginBlock.Events) > 0 {
