@@ -11,9 +11,9 @@ type EventOriginIndexer struct {
 }
 
 const (
-	DeliverTx  = "DeliverTx"
-	BeginBlock = "BeginBlock"
-	EndBlock   = "EndBlock"
+	DeliverTx  string = "DeliverTx"
+	BeginBlock        = "BeginBlock"
+	EndBlock          = "EndBlock"
 )
 
 func NewEventOriginIndexer(indexStore dstore.Store, indexSize uint64, startBlock uint64) *EventOriginIndexer {
