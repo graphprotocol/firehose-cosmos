@@ -6,12 +6,13 @@ on:
       - "v*"
 
 env:
-  GO_VERSION: 1.17
+  GO_VERSION: 1.18
   CGO_ENABLED: 0
+  IMAGE_REPOSITORY: figmentnetworks/firehose-cosmos
 
 jobs:
-  main:
-    name: Publish Release
+  github-release:
+    name: Publish Release to Github
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -29,3 +30,29 @@ jobs:
         with:
           artifacts: "dist/*"
           allowUpdates: true
+
+  docker-release:
+    name: Publish Docker images
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: docker/setup-buildx-action@v1
+      - id: refs
+        run: |
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/v}
+      - uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_REPOSITORY }}:${{ steps.refs.outputs.SOURCE_TAG }}
+            ${{ env.IMAGE_REPOSITORY }}:latest
+          platforms: linux/amd64,linux/arm64
