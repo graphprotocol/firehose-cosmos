@@ -10,12 +10,6 @@ type EventOriginIndexer struct {
 	BlockIndexer blockIndexer
 }
 
-const (
-	DeliverTx  string = "DeliverTx"
-	BeginBlock        = "BeginBlock"
-	EndBlock          = "EndBlock"
-)
-
 func NewEventOriginIndexer(indexStore dstore.Store, indexSize uint64, startBlock uint64) *EventOriginIndexer {
 	bi := transform.NewBlockIndexer(
 		indexStore,
@@ -33,16 +27,16 @@ func (i *EventOriginIndexer) ProcessBlock(block *pbcosmos.Block) {
 	keyMap := make(map[string]bool)
 
 	if len(block.ResultBeginBlock.Events) > 0 {
-		keyMap[BeginBlock] = true
+		keyMap[string(BeginBlock)] = true
 	}
 
 	if len(block.ResultEndBlock.Events) > 0 {
-		keyMap[EndBlock] = true
+		keyMap[string(EndBlock)] = true
 	}
 
 	for _, tx := range block.Transactions {
 		if len(tx.Result.Events) > 0 {
-			keyMap[DeliverTx] = true
+			keyMap[string(DeliverTx)] = true
 			break //exit the loop as soon as we hit this once
 		}
 	}

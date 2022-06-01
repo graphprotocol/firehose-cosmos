@@ -15,6 +15,14 @@ import (
 
 var EventOriginFilterMessageName = proto.MessageName(&pbtransform.EventOriginFilter{})
 
+type EventOrigin string
+
+const (
+	DeliverTx  EventOrigin = "DeliverTx"
+	BeginBlock EventOrigin = "BeginBlock"
+	EndBlock   EventOrigin = "EndBlock"
+)
+
 func EventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
 	return &transform.Factory{
 		Obj: &pbtransform.EventOriginFilter{},
@@ -62,13 +70,13 @@ func (p *EventOriginFilter) Transform(readOnlyBlk *bstream.Block, in transform.I
 	block := readOnlyBlk.ToProtocol().(*pbcosmos.Block)
 
 	// if filter doesn't pass these Event Origins, nullify the objects in the block
-	if !p.EventOrigins[BeginBlock] {
+	if !p.EventOrigins[string(BeginBlock)] {
 		block.ResultBeginBlock.Events = []*pbcosmos.Event{}
 	}
-	if !p.EventOrigins[EndBlock] {
+	if !p.EventOrigins[string(EndBlock)] {
 		block.ResultEndBlock.Events = []*pbcosmos.Event{}
 	}
-	if !p.EventOrigins[DeliverTx] {
+	if !p.EventOrigins[string(DeliverTx)] {
 		for _, tx := range block.Transactions {
 			tx.Result.Events = []*pbcosmos.Event{}
 		}
