@@ -21,10 +21,10 @@ func NewEventOriginIndexProvider(
 	)
 }
 
-func getEventOriginFilterFunc(EventOrigins map[EventOrigin]bool) func(transform.BitmapGetter) []uint64 {
+func getEventOriginFilterFunc(eventOrigins map[EventOrigin]bool) func(transform.BitmapGetter) []uint64 {
 	return func(getBitmap transform.BitmapGetter) (matchingBlocks []uint64) {
 		out := roaring64.NewBitmap()
-		for et := range EventOrigins {
+		for et := range eventOrigins {
 			if bm := getBitmap(string(et)); bm != nil {
 				out.Or(bm)
 			}

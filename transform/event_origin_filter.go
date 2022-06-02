@@ -13,8 +13,6 @@ import (
 	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
 )
 
-var EventOriginFilterMessageName = proto.MessageName(&pbtransform.EventOriginFilter{})
-
 type EventOrigin string
 
 const (
@@ -22,6 +20,8 @@ const (
 	BeginBlock EventOrigin = "BeginBlock"
 	EndBlock   EventOrigin = "EndBlock"
 )
+
+var EventOriginFilterMessageName = proto.MessageName(&pbtransform.EventOriginFilter{})
 
 func EventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
 	return &transform.Factory{
