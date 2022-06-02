@@ -41,9 +41,9 @@ func EventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint
 				return nil, fmt.Errorf("event origin filter requires at least one event origin")
 			}
 
-			eventOriginMap := make(map[string]bool)
+			eventOriginMap := make(map[EventOrigin]bool)
 			for _, acc := range filter.EventOrigins {
-				eventOriginMap[acc] = true
+				eventOriginMap[EventOrigin(acc)] = true
 			}
 
 			return &EventOriginFilter{
@@ -56,7 +56,7 @@ func EventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint
 }
 
 type EventOriginFilter struct {
-	EventOrigins map[string]bool
+	EventOrigins map[EventOrigin]bool
 
 	indexStore         dstore.Store
 	possibleIndexSizes []uint64
@@ -70,13 +70,13 @@ func (p *EventOriginFilter) Transform(readOnlyBlk *bstream.Block, in transform.I
 	block := readOnlyBlk.ToProtocol().(*pbcosmos.Block)
 
 	// if filter doesn't pass these Event Origins, nullify the objects in the block
-	if !p.EventOrigins[string(BeginBlock)] {
+	if !p.EventOrigins[BeginBlock] {
 		block.ResultBeginBlock.Events = []*pbcosmos.Event{}
 	}
-	if !p.EventOrigins[string(EndBlock)] {
+	if !p.EventOrigins[EndBlock] {
 		block.ResultEndBlock.Events = []*pbcosmos.Event{}
 	}
-	if !p.EventOrigins[string(DeliverTx)] {
+	if !p.EventOrigins[DeliverTx] {
 		for _, tx := range block.Transactions {
 			tx.Result.Events = []*pbcosmos.Event{}
 		}
