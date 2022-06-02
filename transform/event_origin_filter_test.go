@@ -26,10 +26,4 @@ func TestEventOriginFilterString(t *testing.T) {
 		EventOrigins: []string{"DeliverTx"},
 	}
 	assert.Equal(t, "event_origins:\"DeliverTx\"", eof.String())
-
-	eof = pbtransform.EventOriginFilter{
-		EventOrigins: []string{"BeginBlock", "EndBlock", "DeliverTx"},
-	}
-	assert.Equal(t, "event_origins:\"BeginBlock\"  event_origins:\"EndBlock\"  event_origins:\"DeliverTx\"", eof.String())
-
 }
