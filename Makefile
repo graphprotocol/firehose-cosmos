@@ -33,3 +33,9 @@ docker-build:
 .PHONY: docker-push
 docker-push:
 	docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+
+.PHONY: docker-buildall
+docker-buildall:
+	docker buildx build \
+		--platform linux/amd64,linux/arm64 \
+		-t ${DOCKER_IMAGE}:${DOCKER_TAG} .
