@@ -27,13 +27,25 @@ make install
 
 Alternatively, use a prebuilt binary from [Releases Page](https://github.com/figment-networks/firehose-cosmos/releases)
 
+### Docker
+
+You can use our official Docker images: https://hub.docker.com/r/figmentnetworks/firehose-cosmos/tags
+
+```
+docker pull figmentnetworks/firehose-cosmos:0.4.0
+```
+
+Execute with:
+
+```
+docker run --rm -it figmentnetworks/firehose-cosmos:0.4.0 /app/firehose help
+```
+
 ## Usage
 
 To view usage and flags, run: `./build/firehose-cosmos help`.
 
 ```
-Firehose services for Cosmos blockchains
-
 Usage:
   firehose-cosmos [command]
 
@@ -58,8 +70,9 @@ Flags:
   -d, --data-dir string                      Path to data storage for all components of firehose (default "./fh-data")
   -h, --help                                 help for firehose-cosmos
       --log-format string                    Logging format (default "text")
+      --metrics-listen-addr string           If non-empty, the process will listen on this address to server Prometheus metrics (default "0.0.0.0:9102")
+      --pprof-listen-addr string             If non-empty, the process will listen on this address for pprof analysis (see https://golang.org/pkg/net/http/pprof/)
   -v, --verbose int                          Enables verbose output (-vvvv for max verbosity) (default 3)
-      --version                              version for firehose-cosmos
 
 Use "firehose-cosmos [command] --help" for more information about a command.
 ```
