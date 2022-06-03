@@ -130,6 +130,7 @@ func init() {
 		}
 
 		registry := transform.NewRegistry()
+		registry.Register(sftransform.EventOriginFilterFactory(indexStore, possibleIndexSizes))
 		registry.Register(sftransform.EventTypeFilterFactory(indexStore, possibleIndexSizes))
 		registry.Register(sftransform.MessageTypeFilterFactory(indexStore, possibleIndexSizes))
 
