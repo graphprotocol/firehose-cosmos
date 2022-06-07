@@ -78,7 +78,7 @@ func (cr *ConsoleReader) next() (out interface{}, err error) {
 
 func (cr *ConsoleReader) startHeight(height uint64) error {
 	if height <= cr.height {
-		return fmt.Errorf("unexpected height %d", height)
+		return fmt.Errorf("unexpected start height %d", height)
 	}
 
 	cr.height = height
