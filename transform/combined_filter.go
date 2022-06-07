@@ -90,9 +90,9 @@ func newCombinedFilter(pbEventTypeFilter []*pbtransform.EventTypeFilter, pbEvent
 	}
 
 	f := &CombinedFilter{
-		EventTypeFilters:    eventTypeFilters,
-		EventOriginFilters:  eventOriginFilters,
-		MessageTypeFilters: 	messageTypeFilters,
+		EventTypeFilters:   eventTypeFilters,
+		EventOriginFilters: eventOriginFilters,
+		MessageTypeFilters: messageTypeFilters,
 		indexStore:         indexStore,
 		possibleIndexSizes: possibleIndexSizes,
 	}
