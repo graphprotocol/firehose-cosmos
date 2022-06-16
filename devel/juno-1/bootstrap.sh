@@ -59,7 +59,10 @@ fi
 log "Set persistent peers"
 sed -i -e "s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" ${JUNO_HOME}/config/config.toml
 
-log Set the minimum gas prices
+log "Set Halt Height"
+sed -i -e "s/^halt-height = 0$/halt-height = 2616300/" ${JUNO_HOME}/config/app.toml
+
+log "Set the minimum gas prices"
 sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0.0025ujuno,0.001ibc\/C4CFF46FD6DE35CA4CF4CE031E643C8FDC9BA4B99AE598E9B0ED98FE3A2319F9\"/" ${JUNO_HOME}/config/app.toml
 
 log "Create a local key pair"
