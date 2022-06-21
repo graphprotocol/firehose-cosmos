@@ -6,6 +6,7 @@ LDFLAGS      ?= -s -w -X main.BuildCommit=$(BUILD_COMMIT) -X main.BuildTime=$(BU
 VERSION      ?= latest
 DOCKER_IMAGE ?= figmentnetworks/firehose-cosmos
 DOCKER_TAG   ?= ${VERSION}
+DOCKER_UID   ?= 1234
 
 .PHONY: build
 build:
@@ -28,7 +29,7 @@ test:
 
 .PHONY: docker-build
 docker-build:
-	docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+	docker build --build-arg=USER_ID=${DOCKER_UID} -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
 
 .PHONY: docker-push
 docker-push:
@@ -37,5 +38,6 @@ docker-push:
 .PHONY: docker-buildall
 docker-buildall:
 	docker buildx build \
+		--build-arg=USER_ID=${DOCKER_UID} \
 		--platform linux/amd64,linux/arm64 \
 		-t ${DOCKER_IMAGE}:${DOCKER_TAG} .
