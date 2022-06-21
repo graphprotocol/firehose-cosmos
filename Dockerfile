@@ -16,12 +16,14 @@ RUN make build
 # ------------------------------------------------------------------------------
 FROM alpine AS release
 
+ARG USER_ID=1234
+
 WORKDIR /app/
 
 COPY --from=build /build/build/firehose-cosmos /app/firehose
 
-RUN addgroup --gid 1234 firehose
-RUN adduser --system --uid 1234 firehose
-RUN chown -R firehose:firehose /app
+RUN addgroup --gid ${USER_ID} firehose && \
+    adduser --system --uid ${USER_ID} firehose && \
+    chown -R firehose:firehose /app
 
-USER 1234
+USER ${USER_ID}
