@@ -61,7 +61,7 @@ func NewEventTypeFilter(in *pbtransform.EventTypeFilter) (*EventTypeFilter, erro
 	f := &EventTypeFilter{
 		EventTypes: eventTypeMap,
 	}
-
+	panic(f)
 	return f, nil
 
 }
