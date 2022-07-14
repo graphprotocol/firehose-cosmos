@@ -88,7 +88,7 @@ start:
     - firehose
   flags:
     common-first-streamable-block: $OSMOSIS_GENESIS_HEIGHT
-    common-blockstream-addr: localhost:9000
+    common-blockstream-addr:
     ingestor-mode: node
     ingestor-node-path: $(which osmosisd)
     ingestor-node-args: start --x-crisis-skip-assert-invariants --home=./osmosis_home
