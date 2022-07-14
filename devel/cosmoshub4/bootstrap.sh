@@ -103,7 +103,7 @@ start:
     - firehose
   flags:
     common-first-streamable-block: $GAIA_GENESIS_HEIGHT
-    common-blockstream-addr: localhost:9000
+    common-blockstream-addr:
     ingestor-mode: node
     ingestor-node-path: ./gaiad
     ingestor-node-args: start --x-crisis-skip-assert-invariants --home=./gaia_home
