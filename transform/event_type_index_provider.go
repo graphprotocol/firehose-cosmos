@@ -22,10 +22,10 @@ func NewEventTypeIndexProvider(
 }
 
 func getFilterFunc(eventTypes map[string]bool) func(transform.BitmapGetter) []uint64 {
-	return func(getBitmap transform.BitmapGetter) (matchingBlocks []uint64) {
+	return func(bitmaps transform.BitmapGetter) (matchingBlocks []uint64) {
 		out := roaring64.NewBitmap()
 		for et := range eventTypes {
-			if bm := getBitmap(et); bm != nil {
+			if bm := bitmaps.Get(et); bm != nil {
 				out.Or(bm)
 			}
 		}

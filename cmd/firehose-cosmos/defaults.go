@@ -20,6 +20,7 @@ var (
 	// Blocks store
 	MergedBlocksStoreURL string = "file://{fh-data-dir}/storage/merged-blocks"
 	OneBlockStoreURL     string = "file://{fh-data-dir}/storage/one-blocks"
+	ForkedBlockStoreURL  string = "file://{fh-data-dir}/storage/forked-blocks"
 
 	// Protocol defaults
 	FirstStreamableBlock uint64 = 0
@@ -44,9 +45,10 @@ func initCommonFlags(flags *pflag.FlagSet) {
 	flags.String("pprof-listen-addr", "", "If non-empty, the process will listen on this address for pprof analysis (see https://golang.org/pkg/net/http/pprof/)")
 
 	// Common stores configuration flags
-	flags.String("common-blocks-store-url", MergedBlocksStoreURL, "Store URL (with prefix) where to read/write")
-	flags.String("common-oneblock-store-url", OneBlockStoreURL, "Store URL (with prefix) to read/write one-block files")
-	flags.String("common-blockstream-addr", RelayerServingAddr, "GRPC endpoint to get real-time blocks")
+	flags.String("common-merged-blocks-store-url", MergedBlocksStoreURL, "Store URL (with prefix) where to read/write")
+	flags.String("common-one-block-store-url", OneBlockStoreURL, "Store URL (with prefix) to read/write one-block files")
+	flags.String("common-forked-blocks-store-url", ForkedBlockStoreURL, "Store URL (with prefix) to read/write forked one-block files")
+	flags.String("common-live-blocks-addr", RelayerServingAddr, "GRPC endpoint to get real-time blocks")
 	flags.Uint64("common-first-streamable-block", FirstStreamableBlock, "First streamable block number")
 
 	// Authentication, metering and rate limiter plugins

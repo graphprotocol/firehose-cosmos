@@ -38,7 +38,6 @@ func main() {
 	rootCmd.PersistentPreRunE = preRun
 
 	rootCmd.AddCommand(
-		initCommand,
 		startCommand,
 		resetCommand,
 		tools.Cmd,

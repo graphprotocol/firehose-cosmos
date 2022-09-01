@@ -37,8 +37,24 @@ func (cr *ConsoleReader) Done() <-chan interface{} {
 
 func (cr *ConsoleReader) Close() {}
 
-func (cr *ConsoleReader) Read() (out interface{}, err error) {
-	return cr.next()
+func (cr *ConsoleReader) ReadBlock() (out *bstream.Block, err error) {
+	v, err := cr.next()
+	if err != nil {
+		return nil, err
+	}
+
+	if v == nil {
+		return nil, fmt.Errorf("console reader read a nil *bstream.Block, this is invalid")
+	}
+
+	pbBlock := v.(*pbcosmos.Block)
+	fmt.Println("pbblock is", pbBlock)
+	blk, err := FromProto(pbBlock)
+	if err != nil {
+		return nil, err
+	}
+	return blk, nil
+
 }
 
 func (cr *ConsoleReader) next() (out interface{}, err error) {
@@ -96,9 +112,13 @@ func FromProto(b interface{}) (*bstream.Block, error) {
 		return nil, err
 	}
 
+	previousID := ""
+	if block.Header.LastBlockId != nil {
+		previousID = hex2string(block.Header.LastBlockId.Hash)
+	}
 	blk := &bstream.Block{
 		Id:             hex2string(block.Header.Hash),
-		PreviousId:     hex2string(block.Header.LastBlockId.Hash),
+		PreviousId:     previousID,
 		Number:         uint64(block.Header.Height),
 		LibNum:         uint64(block.Header.Height - 1),
 		Timestamp:      parseTimestamp(block.Header.Time),

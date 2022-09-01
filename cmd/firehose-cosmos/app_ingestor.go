@@ -5,9 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"math"
 	"os"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -35,9 +33,11 @@ const (
 	modeNode  = "node"  // Consume events from the spawned node process
 )
 
+var ingestorLogger, ingestorTracer = logging.PackageLogger("ingestor", "github.com/figment-network/firehose-cosmos/noderunner")
+
 func init() {
-	appLogger := zap.NewNop()
-	logging.Register("ingestor", &appLogger)
+	appLogger := ingestorLogger
+	appTracer := ingestorTracer
 
 	registerFlags := func(cmd *cobra.Command) error {
 		flags := cmd.Flags()
@@ -48,13 +48,11 @@ func init() {
 		flags.Int("ingestor-line-buffer-size", defaultLineBufferSize, "Buffer size in bytes for the line reader")
 		flags.String("ingestor-working-dir", "{fh-data-dir}/workdir", "Path where mindreader will stores its files")
 		flags.String("ingestor-grpc-listen-addr", BlockStreamServingAddr, "GRPC server listen address")
-		flags.Duration("ingestor-merge-threshold-block-age", time.Duration(math.MaxInt64), "When processing blocks with a blocktime older than this threshold, they will be automatically merged")
 		flags.String("ingestor-node-path", "", "Path to node binary")
 		flags.String("ingestor-node-dir", "", "Node working directory")
 		flags.String("ingestor-node-args", "", "Node process arguments")
 		flags.String("ingestor-node-env", "", "Node process env vars")
 		flags.String("ingestor-node-logs-filter", "", "Node process log filter expression")
-		flags.Duration("ingestor-wait-upload-complete-on-shutdown", 10*time.Second, "When the ingestor is shutting down, it will wait up to that amount of time for the archiver to finish uploading the blocks before leaving anyway")
 
 		return nil
 	}
@@ -77,27 +75,16 @@ func init() {
 	factoryFunc := func(runtime *launcher.Runtime) (launcher.App, error) {
 		sfDataDir := runtime.AbsDataDir
 
-		oneBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-oneblock-store-url"))
-		mergedBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-blocks-store-url"))
-		workingDir := mustReplaceDataDir(sfDataDir, viper.GetString("ingestor-working-dir"))
+		_, oneBlockStoreURL, _, err := GetCommonStoresURLs(runtime.AbsDataDir)
+		workingDir := MustReplaceDataDir(sfDataDir, viper.GetString("ingestor-working-dir"))
 		gprcListenAdrr := viper.GetString("ingestor-grpc-listen-addr")
-		mergeAndStoreDirectly := viper.GetBool("ingestor-merge-and-store-directly")
-		mergeThresholdBlockAge := viper.GetDuration("ingestor-merge-threshold-block-age")
 		batchStartBlockNum := viper.GetUint64("ingestor-start-block-num")
 		batchStopBlockNum := viper.GetUint64("ingestor-stop-block-num")
-		waitTimeForUploadOnShutdown := viper.GetDuration("ingestor-wait-upload-complete-on-shutdown")
 		oneBlockFileSuffix := viper.GetString("ingestor-oneblock-suffix")
 		blocksChanCapacity := viper.GetInt("ingestor-blocks-chan-capacity")
 
-		tracker := bstream.NewTracker(50)
-		tracker.AddResolver(bstream.OffsetStartBlockResolver(100))
-
 		consoleReaderFactory := func(lines chan string) (mindreader.ConsolerReader, error) {
 			return codec.NewConsoleReader(lines, zlog)
-		}
-
-		consoleReaderTransformer := func(obj interface{}) (*bstream.Block, error) {
-			return codec.FromProto(obj)
 		}
 
 		blockStreamServer := blockstream.NewUnmanagedServer(blockstream.ServerOptionWithLogger(appLogger))
@@ -116,23 +103,17 @@ func init() {
 
 		mrp, err := mindreader.NewMindReaderPlugin(
 			oneBlockStoreURL,
-			mergedBlockStoreURL,
-			mergeAndStoreDirectly,
-			mergeThresholdBlockAge,
 			workingDir,
 			consoleReaderFactory,
-			consoleReaderTransformer,
-			tracker,
 			batchStartBlockNum,
 			batchStopBlockNum,
 			blocksChanCapacity,
 			headBlockUpdater,
 			func(error) {},
-			true,
-			waitTimeForUploadOnShutdown,
 			oneBlockFileSuffix,
 			blockStreamServer,
 			appLogger,
+			appTracer,
 		)
 		if err != nil {
 			log.Fatal("error initialising mind reader", zap.Error(err))
@@ -168,8 +149,9 @@ func init() {
 	})
 }
 
-func headBlockUpdater(uint64, string, time.Time) {
+func headBlockUpdater(_ *bstream.Block) error {
 	// TODO: will need to be implemented somewhere
+	return nil
 }
 
 func checkLogsSource(dir string) error {
