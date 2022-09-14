@@ -13,7 +13,7 @@ case $NETWORK in
   mainnet)
     echo "Using MAINNET"
     GAIA_VERSION=${GAIA_VERSION:-"v4.2.1"}
-    GAIA_GENESIS="https://github.com/cosmos/mainnet/raw/master/genesis.cosmoshub-4.json.gz"
+    GAIA_GENESIS="https://raw.githubusercontent.com/cosmos/mainnet/master/genesis/genesis.cosmoshub-4.json.gz"
     GAIA_GENESIS_HEIGHT=${GAIA_GENESIS_HEIGHT:-"5200791"}
     GAIA_ADDRESS_BOOK="https://quicksync.io/addrbook.cosmos.json"
   ;;
