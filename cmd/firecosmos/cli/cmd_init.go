@@ -14,7 +14,7 @@ var (
 )
 
 func runInitCommand(cmd *cobra.Command, args []string) error {
-	if err := mkdirStorePathIfLocal(mustReplaceDataDir(DataDir, viper.GetString("common-blocks-store-url"))); err != nil {
+	if err := mkdirStorePathIfLocal(mustReplaceDataDir(DataDir, viper.GetString("common-merged-blocks-store-url"))); err != nil {
 		return err
 	}
 

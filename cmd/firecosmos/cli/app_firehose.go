@@ -34,8 +34,8 @@ func init() {
 	logging.Register("firehose", &appLogger)
 
 	registerFlags := func(cmd *cobra.Command) error {
-		cmd.Flags().String("firehose-grpc-listen-addr", FirehoseGRPCServingAddr, "Address on which the firehose will listen")
-		cmd.Flags().StringSlice("firehose-blocks-store-urls", nil, "If non-empty, overrides common-blocks-store-url with a list of blocks stores")
+		cmd.Flags().String("firehose-grpc-listen-addr", FirehoseGRPCServingAddr, "Address on which the Firehose will listen")
+		cmd.Flags().StringSlice("firehose-blocks-store-urls", nil, "If non-empty, overrides common-merged-blocks-store-url with a list of blocks stores")
 		cmd.Flags().Duration("firehose-real-time-tolerance", 1*time.Minute, "Firehose will became alive if now - block time is smaller then tolerance")
 		cmd.Flags().Uint64("firehose-tracker-offset", 100, "Number of blocks for the bstream block resolver")
 		cmd.Flags().String("firehose-block-index-url", "", "If non-empty, will use this URL as a store to load index data used by some transforms")
@@ -52,7 +52,7 @@ func init() {
 		tracker.AddResolver(bstream.OffsetStartBlockResolver(viper.GetUint64("firehose-tracker-offset")))
 
 		// Configure block stream connection (to node or relayer)
-		blockstreamAddr := viper.GetString("common-blockstream-addr")
+		blockstreamAddr := viper.GetString("common-live-blocks-addr")
 		if blockstreamAddr == "-" {
 			blockstreamAddr = ""
 		}
@@ -61,7 +61,7 @@ func init() {
 			tracker.AddGetter(bstream.BlockStreamHeadTarget, bstream.StreamHeadBlockRefGetter(blockstreamAddr))
 		}
 
-		// Enable HEAD tracker when block stream is not available, to allow firehose to serve static data
+		// Enable HEAD tracker when block stream is not available, to allow Firehose to serve static data
 		rpcHeadTrackerURL := viper.GetString("firehose-rpc-head-tracker-url")
 		if rpcHeadTrackerURL != "" && blockstreamAddr == "" {
 			tracker.AddGetter(bstream.BlockStreamHeadTarget, rpcHeadTracker(rpcHeadTrackerURL))
@@ -96,7 +96,7 @@ func init() {
 		// Configure firehose data sources
 		firehoseBlocksStoreURLs := viper.GetStringSlice("firehose-blocks-store-urls")
 		if len(firehoseBlocksStoreURLs) == 0 {
-			firehoseBlocksStoreURLs = []string{viper.GetString("common-blocks-store-url")}
+			firehoseBlocksStoreURLs = []string{viper.GetString("common-merged-blocks-store-url")}
 		} else if len(firehoseBlocksStoreURLs) == 1 && strings.Contains(firehoseBlocksStoreURLs[0], ",") {
 			firehoseBlocksStoreURLs = strings.Split(firehoseBlocksStoreURLs[0], ",")
 		}
@@ -156,7 +156,7 @@ func init() {
 	launcher.RegisterApp(&launcher.AppDef{
 		ID:            "firehose",
 		Title:         "Block Firehose",
-		Description:   "Provides on-demand filtered blocks, depends on common-blocks-store-url and common-blockstream-addr",
+		Description:   "Provides on-demand filtered blocks, depends on common-merged-blocks-store-url and common-live-blocks-addr",
 		MetricsID:     "firehose",
 		Logger:        launcher.NewLoggingDef("firehose.*", nil),
 		RegisterFlags: registerFlags,

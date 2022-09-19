@@ -19,7 +19,7 @@ var (
 	allFlags = map[string]bool{}
 
 	rootCmd = &cobra.Command{
-		Use:     "firehose-cosmos",
+		Use:     "firecosmos",
 		Short:   "Firehose services for Cosmos blockchains",
 		Version: versionString(),
 	}

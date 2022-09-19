@@ -13,8 +13,8 @@ import (
 func init() {
 	registerFlags := func(cmd *cobra.Command) error {
 		cmd.Flags().String("relayer-grpc-listen-addr", RelayerServingAddr, "Address to listen for incoming gRPC requests")
-		cmd.Flags().StringSlice("relayer-source", []string{BlockStreamServingAddr}, "List of Blockstream sources (mindreaders) to connect to for live block feeds (repeat flag as needed)")
-		cmd.Flags().Int("relayer-source-request-burst", 90, "Block burst requested by relayer (useful when chaining relayers together, because normally a mindreader won't have a block buffer)")
+		cmd.Flags().StringSlice("relayer-source", []string{BlockStreamServingAddr}, "List of Blockstream sources (readers) to connect to for live block feeds (repeat flag as needed)")
+		cmd.Flags().Int("relayer-source-request-burst", 90, "Block burst requested by relayer (useful when chaining relayers together, because normally a reader won't have a block buffer)")
 		cmd.Flags().String("relayer-merger-addr", MergerServingAddr, "Address for grpc merger service")
 		cmd.Flags().Int("relayer-buffer-size", 350, "Number of blocks that will be kept and sent immediately on connection")
 		cmd.Flags().Uint64("relayer-min-start-offset", 120, "Number of blocks before HEAD where we want to start for faster buffer filling (missing blocks come from files/merger)")
@@ -38,7 +38,7 @@ func init() {
 			MaxSourceLatency:   viper.GetDuration("relayer-max-source-latency"),
 			SourceRequestBurst: viper.GetInt("relayer-source-request-burst"),
 			MinStartOffset:     viper.GetUint64("relayer-min-start-offset"),
-			SourceStoreURL:     mustReplaceDataDir(sfDataDir, viper.GetString("common-blocks-store-url")),
+			SourceStoreURL:     mustReplaceDataDir(sfDataDir, viper.GetString("common-merged-blocks-store-url")),
 		}, &relayerApp.Modules{}), nil
 	}
 

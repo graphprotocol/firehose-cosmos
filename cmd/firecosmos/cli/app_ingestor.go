@@ -46,7 +46,7 @@ func init() {
 		flags.String("ingestor-logs-dir", "", "Event logs source directory")
 		flags.String("ingestor-logs-pattern", "\\.log(\\.[\\d]+)?", "Logs file pattern")
 		flags.Int("ingestor-line-buffer-size", defaultLineBufferSize, "Buffer size in bytes for the line reader")
-		flags.String("ingestor-working-dir", "{fh-data-dir}/workdir", "Path where mindreader will stores its files")
+		flags.String("ingestor-working-dir", "{fh-data-dir}/workdir", "Path where reader will stores its files")
 		flags.String("ingestor-grpc-listen-addr", BlockStreamServingAddr, "GRPC server listen address")
 		flags.Duration("ingestor-merge-threshold-block-age", time.Duration(math.MaxInt64), "When processing blocks with a blocktime older than this threshold, they will be automatically merged")
 		flags.String("ingestor-node-path", "", "Path to node binary")
@@ -78,7 +78,7 @@ func init() {
 		sfDataDir := runtime.AbsDataDir
 
 		oneBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-oneblock-store-url"))
-		mergedBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-blocks-store-url"))
+		mergedBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-merged-blocks-store-url"))
 		workingDir := mustReplaceDataDir(sfDataDir, viper.GetString("ingestor-working-dir"))
 		gprcListenAdrr := viper.GetString("ingestor-grpc-listen-addr")
 		mergeAndStoreDirectly := viper.GetBool("ingestor-merge-and-store-directly")
@@ -135,7 +135,7 @@ func init() {
 			appLogger,
 		)
 		if err != nil {
-			log.Fatal("error initialising mind reader", zap.Error(err))
+			log.Fatal("error initialising reader", zap.Error(err))
 			return nil, nil
 		}
 
