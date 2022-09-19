@@ -59,8 +59,8 @@ Available Commands:
 
 Flags:
       --common-auth-plugin string            Auth plugin URI, see streamingfast/dauth repository (default "null://")
-      --common-blocks-store-url string       Store URL (with prefix) where to read/write (default "file://{fh-data-dir}/storage/merged-blocks")
-      --common-blockstream-addr string       GRPC endpoint to get real-time blocks (default "0.0.0.0:9010")
+      --common-merged-blocks-store-url string       Store URL (with prefix) where to read/write (default "file://{fh-data-dir}/storage/merged-blocks")
+      --common-live-blocks-addr string       GRPC endpoint to get real-time blocks (default "0.0.0.0:9010")
       --common-first-streamable-block uint   First streamable block number
       --common-metering-plugin string        Metering plugin URI, see streamingfast/dmetering repository (default "null://")
       --common-oneblock-store-url string     Store URL (with prefix) to read/write one-block files (default "file://{fh-data-dir}/storage/one-blocks")
