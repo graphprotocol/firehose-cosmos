@@ -1,6 +1,6 @@
 # Cosmoshub4 Network
 
-To start firehose for the Gaia/Cosmoshub4 network, first run the bootstraping script:
+To start Firehose for the Gaia/Cosmoshub4 network, first run the bootstraping script:
 
 ```bash
 ./bootstrap.sh
@@ -13,7 +13,7 @@ run the script with an extra environment variable:
 CLEANUP=1 ./bootstrap.sh
 ```
 
-After bootstrapping is complete, start the firehose:
+After bootstrapping is complete, start the Firehose:
 
 ```bash
 ./start.sh
@@ -23,7 +23,7 @@ This will start the node from genesis, so give it some time until it start synci
 
 You may check on the node's status (if its running) by opening `http://localhost:26657/status` in your browser.
 
-Test if firehose is ready to stream blocks with `grpcurl` command:
+Test if Firehose is ready to stream blocks with `grpcurl` command:
 
 ```bash
 grpcurl -plaintext localhost:9030 sf.firehose.v1.Stream.Blocks | jq

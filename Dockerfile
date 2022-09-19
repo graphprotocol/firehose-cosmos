@@ -20,7 +20,7 @@ ARG USER_ID=1234
 
 WORKDIR /app/
 
-COPY --from=build /build/build/firehose-cosmos /app/firehose
+COPY --from=build /build/build/firecosmos /app/firehose
 
 RUN addgroup --gid ${USER_ID} firehose && \
     adduser --system --uid ${USER_ID} firehose && \

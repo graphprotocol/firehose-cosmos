@@ -1,7 +1,7 @@
 PKG          ?= github.com/figment-networks/firehose-cosmos
 BUILD_COMMIT ?= $(shell git rev-parse HEAD)
 BUILD_TIME   ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ" | tr -d '\n')
-BUILD_PATH   ?= firehose-cosmos
+BUILD_PATH   ?= firecosmos
 LDFLAGS      ?= -s -w -X main.BuildCommit=$(BUILD_COMMIT) -X main.BuildTime=$(BUILD_TIME)
 VERSION      ?= latest
 DOCKER_IMAGE ?= figmentnetworks/firehose-cosmos
@@ -10,11 +10,11 @@ DOCKER_UID   ?= 1234
 
 .PHONY: build
 build:
-	go build -o build/firehose-cosmos -ldflags "$(LDFLAGS)" ./cmd/firehose-cosmos
+	go build -o build/firecosmos -ldflags "$(LDFLAGS)" ./cmd/firecosmos/cli
 
 .PHONY: install
 install:
-	go install -ldflags "$(LDFLAGS)" ./cmd/firehose-cosmos
+	go install -ldflags "$(LDFLAGS)" ./cmd/firecosmos/cli
 
 .PHONY: build-all
 build-all:

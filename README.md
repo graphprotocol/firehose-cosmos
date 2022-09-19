@@ -17,7 +17,7 @@ Once done, let's build the development binary:
 make build
 ```
 
-You should be able to use the `./build/firehose-cosmos` binary moving forward.
+You should be able to use the `./build/firecosmos` binary moving forward.
 
 To install the binary globally, run:
 
@@ -43,11 +43,11 @@ docker run --rm -it figmentnetworks/firehose-cosmos:0.4.0 /app/firehose help
 
 ## Usage
 
-To view usage and flags, run: `./build/firehose-cosmos help`.
+To view usage and flags, run: `./build/firecosmos help`.
 
 ```
 Usage:
-  firehose-cosmos [command]
+  firecosmos [command]
 
 Available Commands:
   completion  Generate the autocompletion script for the specified shell
@@ -68,13 +68,13 @@ Flags:
       --common-startup-delay duration        Delay before launching firehose process
   -c, --config string                        Configuration file for the firehose (default "firehose.yml")
   -d, --data-dir string                      Path to data storage for all components of firehose (default "./fh-data")
-  -h, --help                                 help for firehose-cosmos
+  -h, --help                                 help for firecosmos
       --log-format string                    Logging format (default "text")
       --metrics-listen-addr string           If non-empty, the process will listen on this address to server Prometheus metrics (default "0.0.0.0:9102")
       --pprof-listen-addr string             If non-empty, the process will listen on this address for pprof analysis (see https://golang.org/pkg/net/http/pprof/)
   -v, --verbose int                          Enables verbose output (-vvvv for max verbosity) (default 3)
 
-Use "firehose-cosmos [command] --help" for more information about a command.
+Use "firecosmos [command] --help" for more information about a command.
 ```
 
 ## Configuration
@@ -133,7 +133,7 @@ We provide scripts for running firehose for these networks:
 
 ### Service Ports
 
-By default, `firehose-cosmos` will start all available services, each providing a GRPC interface.
+By default, `firecosmos` will start all available services, each providing a GRPC interface.
 
 - `9000` - Ingestor
 - `9010` - Relayer
