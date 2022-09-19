@@ -18,17 +18,17 @@ import (
 func init() {
 	Cmd.AddCommand(DownloadFromFirehoseCmd)
 	DownloadFromFirehoseCmd.Flags().StringP("api-token-env-var", "a", "FIREHOSE_API_TOKEN", "Look for a JWT in this environment variable to authenticate against endpoint")
-	DownloadFromFirehoseCmd.Flags().BoolP("plaintext", "p", false, "Use plaintext connection to firehose")
-	DownloadFromFirehoseCmd.Flags().BoolP("insecure", "k", false, "Skip SSL certificate validation when connecting to firehose")
+	DownloadFromFirehoseCmd.Flags().BoolP("plaintext", "p", false, "Use plaintext connection to Firehose")
+	DownloadFromFirehoseCmd.Flags().BoolP("insecure", "k", false, "Skip SSL certificate validation when connecting to Firehose")
 }
 
 var DownloadFromFirehoseCmd = &cobra.Command{
 	Use:     "download-from-firehose",
-	Short:   "download blocks from firehose and save them to merged-blocks",
+	Short:   "download blocks from Firehose and save them to merged-blocks",
 	Args:    cobra.ExactArgs(4),
 	RunE:    downloadFromFirehoseE,
 	PreRunE: initFirstStreamable,
-	Example: "firehose-cosmos tools download-from-firehose f.q.d.n:443 1000 2000 ./outputdir",
+	Example: "firecosmos tools download-from-firehose f.q.d.n:443 1000 2000 ./outputdir",
 }
 
 func downloadFromFirehoseE(cmd *cobra.Command, args []string) error {

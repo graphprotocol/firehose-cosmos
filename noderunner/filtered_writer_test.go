@@ -32,9 +32,9 @@ func TestFilteredWriter(t *testing.T) {
 			output: "Doing something",
 		},
 		{
-			expr: "deepmind",
+			expr: "firehose",
 			input: []string{
-				"\x1b[90m1:01PM\x1b[0m \x1b[32mINF\x1b[0m Version info \x1b[36mblock=\x1b[0m11 \x1b[36mp2p=\x1b[0m8 \x1b[36msoftware=\x1b[0mv0.34.9-deepmind\n",
+				"\x1b[90m1:01PM\x1b[0m \x1b[32mINF\x1b[0m Version info \x1b[36mblock=\x1b[0m11 \x1b[36mp2p=\x1b[0m8 \x1b[36msoftware=\x1b[0mv0.34.9-firehose\n",
 			},
 			output: "",
 		},
