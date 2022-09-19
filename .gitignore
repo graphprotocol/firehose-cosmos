@@ -7,3 +7,4 @@ build/
 firehose.yml
 firehose-*.yml
 .vscode/
+.idea/
