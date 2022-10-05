@@ -26,7 +26,7 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
-	github.com/streamingfast/bstream v0.0.2-0.20220428192925-5d0312d274f0
+	github.com/streamingfast/bstream v0.0.2-0.20221005215914-b0266dcc3509
 	github.com/streamingfast/dbin v0.0.0-20210809205249-73d5eca35dc5
 	github.com/streamingfast/dgrpc v0.0.0-20220301153539-536adf71b594
 	github.com/streamingfast/firehose v0.1.1-0.20220331194041-2bf2b9689682
