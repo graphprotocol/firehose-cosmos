@@ -18,10 +18,10 @@ var (
 	zlog     *zap.Logger
 	allFlags = map[string]bool{}
 
-	rootCmd = &cobra.Command{
-		Use:     "firecosmos",
-		Short:   "Firehose services for Cosmos blockchains",
-		Version: versionString(),
+	RootCmd = &cobra.Command{
+		Use:   "firecosmos",
+		Short: "Firehose services for Cosmos blockchains",
+		// Version:  // set by cmd/main.go
 	}
 )
 
@@ -29,15 +29,15 @@ func init() {
 	logging.Register("main", &zlog)
 }
 
-func main() {
+func Main() {
 	cobra.OnInitialize(func() {
-		allFlags = flags.AutoBind(rootCmd, "FH")
+		allFlags = flags.AutoBind(RootCmd, "FH")
 	})
 
-	initCommonFlags(rootCmd.PersistentFlags())
-	rootCmd.PersistentPreRunE = preRun
+	initCommonFlags(RootCmd.PersistentFlags())
+	RootCmd.PersistentPreRunE = preRun
 
-	rootCmd.AddCommand(
+	RootCmd.AddCommand(
 		initCommand,
 		startCommand,
 		resetCommand,
@@ -45,7 +45,7 @@ func main() {
 	)
 
 	derr.Check("registering application flags", launcher.RegisterFlags(startCommand))
-	derr.Check("executing root command", rootCmd.Execute())
+	derr.Check("executing root command", RootCmd.Execute())
 }
 
 func preRun(cmd *cobra.Command, args []string) error {

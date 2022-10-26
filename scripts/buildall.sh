@@ -11,5 +11,5 @@ for target in $TARGETS; do
   GOOS=${parts[0]} GOARCH=${parts[1]} go build \
     -o dist/${NAME}_$target \
     -ldflags "$LDFLAGS" \
-    ./cmd/firecosmos/cli
+    ./cmd/firecosmos
 done

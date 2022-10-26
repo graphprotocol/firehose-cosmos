@@ -87,7 +87,7 @@ Example:
 ```yml
 start:
   args:
-    - ingestor
+    - reader
     - merger
     - relayer
     - firehose
@@ -95,33 +95,33 @@ start:
     # Common flags
     common-first-streamable-block: 1
 
-    # Ingestor specific flags
-    ingestor-mode: node
-    ingestor-node-path: path/to/node/bin
-    ingestor-node-args: start --x-crisis-skip-assert-invariants
-    ingestor-node-env: "KEY=VALUE,KEY=VALUE"
+    # Reader specific flags
+    reader-mode: node
+    reader-node-path: path/to/node/bin
+    reader-node-args: start --x-crisis-skip-assert-invariants
+    reader-node-env: "KEY=VALUE,KEY=VALUE"
 ```
 
 ### Logs input mode
 
-It's possible to run the firehose ingestor from the static logs, mostly for development/testing purposes.
+It's possible to run the firehose reader from the static logs, mostly for development/testing purposes.
 
 Example config:
 
 ```yml
 start:
   args:
-    - ingestor
+    - reader
     # ... other services
   flags:
     # ... other config options
 
-    # Ingestor specific flags
-    ingestor-mode: logs
-    ingestor-logs-dir: /path/to/logs/dir
+    # reader specific flags
+    reader-mode: logs
+    reader-logs-dir: /path/to/logs/dir
 
     # Configure the pattern if not using .log extension
-    # ingestor-logs-pattern: *.log
+    # reader-logs-pattern: *.log
 ```
 
 ## Supported networks
@@ -135,7 +135,7 @@ We provide scripts for running firehose for these networks:
 
 By default, `firecosmos` will start all available services, each providing a GRPC interface.
 
-- `9000` - Ingestor
+- `9000` - Reader
 - `9010` - Relayer
 - `9020` - Merger
 - `9030` - Firehose

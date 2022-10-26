@@ -83,15 +83,15 @@ if [ ! -f "firehose.yml" ]; then
   cat << END >> firehose.yml
 start:
   args:
-    - ingestor
+    - reader
     - merger
     - firehose
   flags:
     common-first-streamable-block: $OSMOSIS_GENESIS_HEIGHT
     common-live-blocks-addr:
-    ingestor-mode: node
-    ingestor-node-path: $(which osmosisd)
-    ingestor-node-args: start --x-crisis-skip-assert-invariants --home=./osmosis_home
-    ingestor-node-logs-filter: "module=(p2p|pex|consensus|x/bank)"
+    reader-mode: node
+    reader-node-path: $(which osmosisd)
+    reader-node-args: start --x-crisis-skip-assert-invariants --home=./osmosis_home
+    reader-node-logs-filter: "module=(p2p|pex|consensus|x/bank)"
 END
 fi

@@ -5,28 +5,21 @@ import (
 	"strings"
 )
 
-var (
-	Version     = "0.5.0"
-	BuildTime   = ""
-	BuildCommit = ""
-)
-
-func versionString() string {
+func VersionString(version, commit, date string) string {
 	var labels []string
-
-	if len(BuildCommit) >= 7 {
-		labels = append(labels, fmt.Sprintf("Commit %s", BuildCommit[0:7]))
-	} else if BuildCommit != "" {
-		labels = append(labels, fmt.Sprintf("Commit %s", BuildCommit))
+	if len(commit) >= 7 {
+		labels = append(labels, fmt.Sprintf("Commit %s", commit[0:7]))
+	} else if commit != "" {
+		labels = append(labels, fmt.Sprintf("Commit %s", commit))
 	}
 
-	if BuildTime != "" {
-		labels = append(labels, fmt.Sprintf("Built %s", BuildTime))
+	if date != "" {
+		labels = append(labels, fmt.Sprintf("Built %s", date))
 	}
 
 	if len(labels) == 0 {
-		return Version
+		return version
 	}
 
-	return fmt.Sprintf("%s (%s)", Version, strings.Join(labels, ", "))
+	return fmt.Sprintf("%s (%s)", version, strings.Join(labels, ", "))
 }

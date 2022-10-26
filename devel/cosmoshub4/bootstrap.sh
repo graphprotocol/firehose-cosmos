@@ -13,14 +13,14 @@ case $NETWORK in
   mainnet)
     echo "Using MAINNET"
     GAIA_VERSION=${GAIA_VERSION:-"v4.2.1"}
-    GAIA_GENESIS="https://github.com/cosmos/mainnet/raw/master/genesis.cosmoshub-4.json.gz"
+    GAIA_GENESIS="https://raw.githubusercontent.com/cosmos/mainnet/master/genesis/genesis.cosmoshub-4.json.gz"
     GAIA_GENESIS_HEIGHT=${GAIA_GENESIS_HEIGHT:-"5200791"}
     GAIA_ADDRESS_BOOK="https://quicksync.io/addrbook.cosmos.json"
   ;;
   testnet)
     echo "Using TESTNET"
     GAIA_VERSION=${GAIA_VERSION:-"v6.0.0"}
-    GAIA_GENESIS="https://github.com/cosmos/testnets/raw/master/v7-theta/public-testnet/genesis.json.gz"
+    GAIA_GENESIS="https://raw.githubusercontent.com/cosmos/testnets/master/v7-theta/public-testnet/genesis.json.gz"
     GAIA_GENESIS_HEIGHT=${GAIA_GENESIS_HEIGHT:-"9034670"}
   ;;
   *)
@@ -67,10 +67,11 @@ fi
 
 if [ ! -f "gaia_home/config/genesis.json" ]; then
   echo "Downloading genesis file"
-  wget --quiet -O gaia_home/config/genesis.json.gz $GAIA_GENESIS
+  wget -O gaia_home/config/genesis.json.gz $GAIA_GENESIS
   gunzip gaia_home/config/genesis.json.gz
 fi
 
+echo "wut"
 case $NETWORK in
   mainnet) # Using addrbook will ensure fast block sync time
     if [ ! -f "gaia_home/config/addrbook.json" ]; then
@@ -94,20 +95,22 @@ enabled = true
 output_file = "stdout"
 END
 
+echo "about to.."
+pwd
 if [ ! -f "firehose.yml" ]; then
   cat << END >> firehose.yml
 start:
   args:
-    - ingestor
+    - reader
     - merger
     - firehose
   flags:
     common-first-streamable-block: $GAIA_GENESIS_HEIGHT
     common-live-blocks-addr:
-    ingestor-mode: node
-    ingestor-node-path: ./gaiad
-    ingestor-node-args: start --x-crisis-skip-assert-invariants --home=./gaia_home
-    ingestor-node-logs-filter: "module=(p2p|pex|consensus|x/bank)"
+    reader-mode: node
+    reader-node-path: ./gaiad
+    reader-node-args: start --x-crisis-skip-assert-invariants --home=./gaia_home
+    reader-node-logs-filter: "module=(p2p|pex|consensus|x/bank)"
     firehose-real-time-tolerance: 99999h
     relayer-max-source-latency: 99999h
     verbose: 1

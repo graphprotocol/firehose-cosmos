@@ -15,7 +15,7 @@ import (
 	"github.com/figment-networks/firehose-cosmos/noderunner"
 )
 
-type IngestorApp struct {
+type ReaderApp struct {
 	*shutter.Shutter
 
 	mode             string
@@ -36,11 +36,11 @@ type IngestorApp struct {
 	logsFilePattern string
 }
 
-func (app *IngestorApp) Terminated() <-chan struct{} {
+func (app *ReaderApp) Terminated() <-chan struct{} {
 	return app.mrp.Terminated()
 }
 
-func (app *IngestorApp) Run() error {
+func (app *ReaderApp) Run() error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -53,13 +53,13 @@ func (app *IngestorApp) Run() error {
 		app.Shutdown(err)
 	})
 
-	zlog.Info("starting ingestor", zap.String("mode", app.mode))
-	defer zlog.Info("ingestor stopped")
+	zlog.Info("starting reader", zap.String("mode", app.mode))
+	defer zlog.Info("reader stopped")
 
-	zlog.Info("starting ingestor blockstream server")
+	zlog.Info("starting reader blockstream server")
 	go app.server.Launch(app.serverListenAddr)
 
-	zlog.Info("starting ingestor reader plugin")
+	zlog.Info("starting reader plugin")
 	go app.mrp.Launch()
 
 	go func() {
@@ -83,11 +83,11 @@ func (app *IngestorApp) Run() error {
 	return app.Err()
 }
 
-func (app *IngestorApp) startFromStdin(ctx context.Context) error {
+func (app *ReaderApp) startFromStdin(ctx context.Context) error {
 	return noderunner.StartLineReader(os.Stdin, app.mrp.LogLine, zlog)
 }
 
-func (app *IngestorApp) startFromNode(ctx context.Context) error {
+func (app *ReaderApp) startFromNode(ctx context.Context) error {
 	args := strings.Split(app.nodeArgs, " ")
 	env := map[string]string{}
 
@@ -108,7 +108,7 @@ func (app *IngestorApp) startFromNode(ctx context.Context) error {
 	return runner.Start(ctx)
 }
 
-func (app *IngestorApp) startFromLogs(ctx context.Context) error {
+func (app *ReaderApp) startFromLogs(ctx context.Context) error {
 	reader, err := filereader.NewReader(ctx, zlog, 10*time.Second, 10*time.Second, app.logsFilePattern, app.logsDir)
 	if err != nil {
 		return err

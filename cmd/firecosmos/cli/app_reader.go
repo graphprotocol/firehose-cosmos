@@ -37,38 +37,38 @@ const (
 
 func init() {
 	appLogger := zap.NewNop()
-	logging.Register("ingestor", &appLogger)
+	logging.Register("reader", &appLogger)
 
 	registerFlags := func(cmd *cobra.Command) error {
 		flags := cmd.Flags()
 
-		flags.String("ingestor-mode", modeStdin, "Mode of operation, one of (stdin, logs, node)")
-		flags.String("ingestor-logs-dir", "", "Event logs source directory")
-		flags.String("ingestor-logs-pattern", "\\.log(\\.[\\d]+)?", "Logs file pattern")
-		flags.Int("ingestor-line-buffer-size", defaultLineBufferSize, "Buffer size in bytes for the line reader")
-		flags.String("ingestor-working-dir", "{fh-data-dir}/workdir", "Path where reader will stores its files")
-		flags.String("ingestor-grpc-listen-addr", BlockStreamServingAddr, "GRPC server listen address")
-		flags.Duration("ingestor-merge-threshold-block-age", time.Duration(math.MaxInt64), "When processing blocks with a blocktime older than this threshold, they will be automatically merged")
-		flags.String("ingestor-node-path", "", "Path to node binary")
-		flags.String("ingestor-node-dir", "", "Node working directory")
-		flags.String("ingestor-node-args", "", "Node process arguments")
-		flags.String("ingestor-node-env", "", "Node process env vars")
-		flags.String("ingestor-node-logs-filter", "", "Node process log filter expression")
-		flags.Duration("ingestor-wait-upload-complete-on-shutdown", 10*time.Second, "When the ingestor is shutting down, it will wait up to that amount of time for the archiver to finish uploading the blocks before leaving anyway")
+		flags.String("reader-mode", modeStdin, "Mode of operation, one of (stdin, logs, node)")
+		flags.String("reader-logs-dir", "", "Event logs source directory")
+		flags.String("reader-logs-pattern", "\\.log(\\.[\\d]+)?", "Logs file pattern")
+		flags.Int("reader-line-buffer-size", defaultLineBufferSize, "Buffer size in bytes for the line reader")
+		flags.String("reader-working-dir", "{fh-data-dir}/workdir", "Path where reader will stores its files")
+		flags.String("reader-grpc-listen-addr", BlockStreamServingAddr, "GRPC server listen address")
+		flags.Duration("reader-merge-threshold-block-age", time.Duration(math.MaxInt64), "When processing blocks with a blocktime older than this threshold, they will be automatically merged")
+		flags.String("reader-node-path", "", "Path to node binary")
+		flags.String("reader-node-dir", "", "Node working directory")
+		flags.String("reader-node-args", "", "Node process arguments")
+		flags.String("reader-node-env", "", "Node process env vars")
+		flags.String("reader-node-logs-filter", "", "Node process log filter expression")
+		flags.Duration("reader-wait-upload-complete-on-shutdown", 10*time.Second, "When the reader is shutting down, it will wait up to that amount of time for the archiver to finish uploading the blocks before leaving anyway")
 
 		return nil
 	}
 
 	initFunc := func(runtime *launcher.Runtime) (err error) {
-		mode := viper.GetString("ingestor-mode")
+		mode := viper.GetString("reader-mode")
 
 		switch mode {
 		case modeStdin:
 			return nil
 		case modeNode:
-			return checkNodeBinPath(viper.GetString("ingestor-node-path"))
+			return checkNodeBinPath(viper.GetString("reader-node-path"))
 		case modeLogs:
-			return checkLogsSource(viper.GetString("ingestor-logs-dir"))
+			return checkLogsSource(viper.GetString("reader-logs-dir"))
 		default:
 			return fmt.Errorf("invalid mode: %v", mode)
 		}
@@ -79,15 +79,15 @@ func init() {
 
 		oneBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-oneblock-store-url"))
 		mergedBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-merged-blocks-store-url"))
-		workingDir := mustReplaceDataDir(sfDataDir, viper.GetString("ingestor-working-dir"))
-		gprcListenAdrr := viper.GetString("ingestor-grpc-listen-addr")
-		mergeAndStoreDirectly := viper.GetBool("ingestor-merge-and-store-directly")
-		mergeThresholdBlockAge := viper.GetDuration("ingestor-merge-threshold-block-age")
-		batchStartBlockNum := viper.GetUint64("ingestor-start-block-num")
-		batchStopBlockNum := viper.GetUint64("ingestor-stop-block-num")
-		waitTimeForUploadOnShutdown := viper.GetDuration("ingestor-wait-upload-complete-on-shutdown")
-		oneBlockFileSuffix := viper.GetString("ingestor-oneblock-suffix")
-		blocksChanCapacity := viper.GetInt("ingestor-blocks-chan-capacity")
+		workingDir := mustReplaceDataDir(sfDataDir, viper.GetString("reader-working-dir"))
+		gprcListenAdrr := viper.GetString("reader-grpc-listen-addr")
+		mergeAndStoreDirectly := viper.GetBool("reader-merge-and-store-directly")
+		mergeThresholdBlockAge := viper.GetDuration("reader-merge-threshold-block-age")
+		batchStartBlockNum := viper.GetUint64("reader-start-block-num")
+		batchStopBlockNum := viper.GetUint64("reader-stop-block-num")
+		waitTimeForUploadOnShutdown := viper.GetDuration("reader-wait-upload-complete-on-shutdown")
+		oneBlockFileSuffix := viper.GetString("reader-oneblock-suffix")
+		blocksChanCapacity := viper.GetInt("reader-blocks-chan-capacity")
 
 		tracker := bstream.NewTracker(50)
 		tracker.AddResolver(bstream.OffsetStartBlockResolver(100))
@@ -139,29 +139,29 @@ func init() {
 			return nil, nil
 		}
 
-		return &IngestorApp{
+		return &ReaderApp{
 			Shutter:          shutter.New(),
 			mrp:              mrp,
-			mode:             viper.GetString("ingestor-mode"),
-			lineBufferSize:   viper.GetInt("ingestor-line-buffer-size"),
-			nodeBinPath:      viper.GetString("ingestor-node-path"),
-			nodeDir:          viper.GetString("ingestor-node-dir"),
-			nodeArgs:         viper.GetString("ingestor-node-args"),
-			nodeEnv:          viper.GetString("ingestor-node-env"),
-			nodeLogsFilter:   viper.GetString("ingestor-node-logs-filter"),
-			logsDir:          viper.GetString("ingestor-logs-dir"),
-			logsFilePattern:  viper.GetString("ingestor-logs-pattern"),
+			mode:             viper.GetString("reader-mode"),
+			lineBufferSize:   viper.GetInt("reader-line-buffer-size"),
+			nodeBinPath:      viper.GetString("reader-node-path"),
+			nodeDir:          viper.GetString("reader-node-dir"),
+			nodeArgs:         viper.GetString("reader-node-args"),
+			nodeEnv:          viper.GetString("reader-node-env"),
+			nodeLogsFilter:   viper.GetString("reader-node-logs-filter"),
+			logsDir:          viper.GetString("reader-logs-dir"),
+			logsFilePattern:  viper.GetString("reader-logs-pattern"),
 			server:           server,
 			serverListenAddr: gprcListenAdrr,
 		}, nil
 	}
 
 	launcher.RegisterApp(&launcher.AppDef{
-		ID:            "ingestor",
-		Title:         "Ingestor",
-		Description:   "Reads the log files produces by the instrumented node",
-		MetricsID:     "ingestor",
-		Logger:        launcher.NewLoggingDef("ingestor.*", nil),
+		ID:            "reader",
+		Title:         "Reader",
+		Description:   "Reads the log files produced by the instrumented node",
+		MetricsID:     "reader",
+		Logger:        launcher.NewLoggingDef("reader.*", nil),
 		RegisterFlags: registerFlags,
 		InitFunc:      initFunc,
 		FactoryFunc:   factoryFunc,
@@ -174,7 +174,7 @@ func headBlockUpdater(uint64, string, time.Time) {
 
 func checkLogsSource(dir string) error {
 	if dir == "" {
-		return errors.New("ingestor logs dir must be set")
+		return errors.New("reader logs dir must be set")
 	}
 
 	dir, err := expandDir(dir)
@@ -183,7 +183,7 @@ func checkLogsSource(dir string) error {
 	}
 
 	if !dirExists(dir) {
-		return errors.New("ingestor logs dir must exist")
+		return errors.New("reader logs dir must exist")
 	}
 
 	return nil
