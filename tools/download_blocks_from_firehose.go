@@ -61,6 +61,7 @@ func downloadFromFirehoseE(cmd *cobra.Command, args []string) error {
 		stop,
 		destFolder,
 		decodeAnyPB,
+		nil,
 		zlog,
 	)
 }

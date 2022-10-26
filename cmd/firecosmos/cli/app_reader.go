@@ -5,24 +5,22 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"math"
 	"os"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/streamingfast/bstream"
 	"github.com/streamingfast/bstream/blockstream"
-	"github.com/streamingfast/dgrpc"
+	dgrpcserver "github.com/streamingfast/dgrpc/server"
+	dgrpcfactory "github.com/streamingfast/dgrpc/server/factory"
 	"github.com/streamingfast/dlauncher/launcher"
 	"github.com/streamingfast/logging"
 	"github.com/streamingfast/node-manager/mindreader"
-
 	pbbstream "github.com/streamingfast/pbgo/sf/bstream/v1"
 	pbheadinfo "github.com/streamingfast/pbgo/sf/headinfo/v1"
+
 	"github.com/streamingfast/shutter"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 
 	"github.com/figment-networks/firehose-cosmos/codec"
 )
@@ -35,9 +33,11 @@ const (
 	modeNode  = "node"  // Consume events from the spawned node process
 )
 
+var readerLogger, readerTracer = logging.PackageLogger("reader", "github.com/figment-network/firehose-cosmos/noderunner")
+
 func init() {
-	appLogger := zap.NewNop()
-	logging.Register("reader", &appLogger)
+	appLogger := readerLogger
+	appTracer := readerTracer
 
 	registerFlags := func(cmd *cobra.Command) error {
 		flags := cmd.Flags()
@@ -48,13 +48,11 @@ func init() {
 		flags.Int("reader-line-buffer-size", defaultLineBufferSize, "Buffer size in bytes for the line reader")
 		flags.String("reader-working-dir", "{fh-data-dir}/workdir", "Path where reader will stores its files")
 		flags.String("reader-grpc-listen-addr", BlockStreamServingAddr, "GRPC server listen address")
-		flags.Duration("reader-merge-threshold-block-age", time.Duration(math.MaxInt64), "When processing blocks with a blocktime older than this threshold, they will be automatically merged")
 		flags.String("reader-node-path", "", "Path to node binary")
 		flags.String("reader-node-dir", "", "Node working directory")
 		flags.String("reader-node-args", "", "Node process arguments")
 		flags.String("reader-node-env", "", "Node process env vars")
 		flags.String("reader-node-logs-filter", "", "Node process log filter expression")
-		flags.Duration("reader-wait-upload-complete-on-shutdown", 10*time.Second, "When the reader is shutting down, it will wait up to that amount of time for the archiver to finish uploading the blocks before leaving anyway")
 
 		return nil
 	}
@@ -77,27 +75,16 @@ func init() {
 	factoryFunc := func(runtime *launcher.Runtime) (launcher.App, error) {
 		sfDataDir := runtime.AbsDataDir
 
-		oneBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-oneblock-store-url"))
-		mergedBlockStoreURL := mustReplaceDataDir(sfDataDir, viper.GetString("common-merged-blocks-store-url"))
-		workingDir := mustReplaceDataDir(sfDataDir, viper.GetString("reader-working-dir"))
-		gprcListenAdrr := viper.GetString("reader-grpc-listen-addr")
-		mergeAndStoreDirectly := viper.GetBool("reader-merge-and-store-directly")
-		mergeThresholdBlockAge := viper.GetDuration("reader-merge-threshold-block-age")
-		batchStartBlockNum := viper.GetUint64("reader-start-block-num")
-		batchStopBlockNum := viper.GetUint64("reader-stop-block-num")
-		waitTimeForUploadOnShutdown := viper.GetDuration("reader-wait-upload-complete-on-shutdown")
-		oneBlockFileSuffix := viper.GetString("reader-oneblock-suffix")
-		blocksChanCapacity := viper.GetInt("reader-blocks-chan-capacity")
-
-		tracker := bstream.NewTracker(50)
-		tracker.AddResolver(bstream.OffsetStartBlockResolver(100))
+		_, oneBlockStoreURL, _, err := GetCommonStoresURLs(runtime.AbsDataDir)
+		workingDir := MustReplaceDataDir(sfDataDir, viper.GetString("ingestor-working-dir"))
+		gprcListenAdrr := viper.GetString("ingestor-grpc-listen-addr")
+		batchStartBlockNum := viper.GetUint64("ingestor-start-block-num")
+		batchStopBlockNum := viper.GetUint64("ingestor-stop-block-num")
+		oneBlockFileSuffix := viper.GetString("ingestor-oneblock-suffix")
+		blocksChanCapacity := viper.GetInt("ingestor-blocks-chan-capacity")
 
 		consoleReaderFactory := func(lines chan string) (mindreader.ConsolerReader, error) {
 			return codec.NewConsoleReader(lines, zlog)
-		}
-
-		consoleReaderTransformer := func(obj interface{}) (*bstream.Block, error) {
-			return codec.FromProto(obj)
 		}
 
 		blockStreamServer := blockstream.NewUnmanagedServer(blockstream.ServerOptionWithLogger(appLogger))
@@ -105,34 +92,29 @@ func init() {
 			return blockStreamServer.Ready(), nil, nil
 		}
 
-		server := dgrpc.NewServer2(
-			dgrpc.WithLogger(appLogger),
-			dgrpc.WithHealthCheck(dgrpc.HealthCheckOverGRPC|dgrpc.HealthCheckOverHTTP, healthCheck),
+		server := dgrpcfactory.ServerFromOptions(
+			dgrpcserver.WithLogger(appLogger),
+			dgrpcserver.WithHealthCheck(dgrpcserver.HealthCheckOverGRPC|dgrpcserver.HealthCheckOverHTTP, healthCheck),
 		)
-		server.RegisterService(func(gs *grpc.Server) {
-			pbheadinfo.RegisterHeadInfoServer(gs, blockStreamServer)
-			pbbstream.RegisterBlockStreamServer(gs, blockStreamServer)
-		})
+		//		err := a.modules.RegisterGRPCService(gs.ServiceRegistrar())
+
+		sr := server.ServiceRegistrar()
+		sr.RegisterService(&pbheadinfo.HeadInfo_ServiceDesc, blockStreamServer)
+		sr.RegisterService(&pbbstream.BlockStream_ServiceDesc, blockStreamServer)
 
 		mrp, err := mindreader.NewMindReaderPlugin(
 			oneBlockStoreURL,
-			mergedBlockStoreURL,
-			mergeAndStoreDirectly,
-			mergeThresholdBlockAge,
 			workingDir,
 			consoleReaderFactory,
-			consoleReaderTransformer,
-			tracker,
 			batchStartBlockNum,
 			batchStopBlockNum,
 			blocksChanCapacity,
 			headBlockUpdater,
 			func(error) {},
-			true,
-			waitTimeForUploadOnShutdown,
 			oneBlockFileSuffix,
 			blockStreamServer,
 			appLogger,
+			appTracer,
 		)
 		if err != nil {
 			log.Fatal("error initialising reader", zap.Error(err))
@@ -156,20 +138,19 @@ func init() {
 		}, nil
 	}
 
-	launcher.RegisterApp(&launcher.AppDef{
+	launcher.RegisterApp(zlog, &launcher.AppDef{
 		ID:            "reader",
 		Title:         "Reader",
 		Description:   "Reads the log files produced by the instrumented node",
-		MetricsID:     "reader",
-		Logger:        launcher.NewLoggingDef("reader.*", nil),
 		RegisterFlags: registerFlags,
 		InitFunc:      initFunc,
 		FactoryFunc:   factoryFunc,
 	})
 }
 
-func headBlockUpdater(uint64, string, time.Time) {
+func headBlockUpdater(_ *bstream.Block) error {
 	// TODO: will need to be implemented somewhere
+	return nil
 }
 
 func checkLogsSource(dir string) error {

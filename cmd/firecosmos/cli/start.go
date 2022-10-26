@@ -7,6 +7,7 @@ import (
 	"github.com/streamingfast/bstream"
 	"github.com/streamingfast/derr"
 	"github.com/streamingfast/dlauncher/launcher"
+	"go.uber.org/zap"
 )
 
 var (
@@ -34,15 +35,15 @@ func runStartCommand(cmd *cobra.Command, args []string) error {
 		Tracker:    tracker,
 	}
 
-	launch := launcher.NewLauncher(modules)
-	userLog.Debug("launcher created")
+	launch := launcher.NewLauncher(zlog, modules)
+	zlog.Debug("launcher created")
 
 	apps := launcher.ParseAppsFromArgs(args, startAppByDefault)
 	if len(args) == 0 {
-		if launcher.DfuseConfig[cmd.Name()] == nil {
-			launcher.DfuseConfig[cmd.Name()] = &launcher.DfuseCommandConfig{}
+		if launcher.Config[cmd.Name()] == nil {
+			launcher.Config[cmd.Name()] = &launcher.CommandConfig{}
 		}
-		apps = launcher.ParseAppsFromArgs(launcher.DfuseConfig[cmd.Name()].Args, startAppByDefault)
+		apps = launcher.ParseAppsFromArgs(launcher.Config[cmd.Name()].Args, startAppByDefault)
 	}
 
 	if err := launch.Launch(apps); err != nil {
@@ -52,13 +53,13 @@ func runStartCommand(cmd *cobra.Command, args []string) error {
 	signalHandler := derr.SetupSignalHandler(viper.GetDuration("common-shutdown-delay"))
 	select {
 	case <-signalHandler:
-		userLog.Printf("Received termination signal, quitting")
+		zlog.Info("Received termination signal, quitting")
 		go launch.Close()
 	case appID := <-launch.Terminating():
 		if launch.Err() == nil {
-			userLog.Printf("Application %s triggered a clean shutdown, quitting", appID)
+			zlog.Info("Application %s triggered a clean shutdown, quitting", zap.String("app_id", appID))
 		} else {
-			userLog.Printf("Application %s shutdown unexpectedly, quitting", appID)
+			zlog.Info("Application %s shutdown unexpectedly, quitting", zap.String("app_id", appID))
 			err = launch.Err()
 		}
 	}

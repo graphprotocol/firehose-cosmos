@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/streamingfast/dlauncher/launcher"
+	"go.uber.org/zap"
 )
 
 var (
@@ -20,13 +21,14 @@ var (
 	// Blocks store
 	MergedBlocksStoreURL string = "file://{fh-data-dir}/storage/merged-blocks"
 	OneBlockStoreURL     string = "file://{fh-data-dir}/storage/one-blocks"
+	ForkedBlockStoreURL  string = "file://{fh-data-dir}/storage/forked-blocks"
 
 	// Protocol defaults
 	FirstStreamableBlock uint64 = 0
 )
 
 func init() {
-	launcher.RegisterCommonFlags = func(cmd *cobra.Command) error {
+	launcher.RegisterCommonFlags = func(zlog *zap.Logger, cmd *cobra.Command) error {
 		initCommonFlags(cmd.Flags())
 		return nil
 	}
@@ -45,7 +47,8 @@ func initCommonFlags(flags *pflag.FlagSet) {
 
 	// Common stores configuration flags
 	flags.String("common-merged-blocks-store-url", MergedBlocksStoreURL, "Store URL (with prefix) where to read/write")
-	flags.String("common-oneblock-store-url", OneBlockStoreURL, "Store URL (with prefix) to read/write one-block files")
+	flags.String("common-one-block-store-url", OneBlockStoreURL, "Store URL (with prefix) to read/write one-block files")
+	flags.String("common-forked-blocks-store-url", ForkedBlockStoreURL, "Store URL (with prefix) to read/write forked one-block files")
 	flags.String("common-live-blocks-addr", RelayerServingAddr, "GRPC endpoint to get real-time blocks")
 	flags.Uint64("common-first-streamable-block", FirstStreamableBlock, "First streamable block number")
 

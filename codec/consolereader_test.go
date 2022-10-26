@@ -3,7 +3,7 @@ package codec
 import (
 	"testing"
 
-	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
+	"github.com/streamingfast/bstream"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/zap"
 )
@@ -31,14 +31,15 @@ func TestConsoleReader(t *testing.T) {
 		reader, err := NewConsoleReader(lines, zap.NewNop())
 		assert.NoError(t, err)
 
-		blockObj, err := reader.Read()
+		blockObj, err := reader.ReadBlock()
 		assert.NoError(t, err)
-		assert.IsType(t, &pbcosmos.Block{}, blockObj)
+		assert.IsType(t, &bstream.Block{}, blockObj)
 
-		block := blockObj.(*pbcosmos.Block)
-		assert.Equal(t, uint64(5201079), block.Header.Height)
-		assert.Len(t, block.Transactions, 2)
-		assert.Len(t, block.ValidatorUpdates, 1)
+		//block := blockObj.ToProtocol().(*pbcosmos.Block)
+		//assert.IsType(t, &pbcosmos.Block{}, block)
+		//assert.Equal(t, uint64(5201079), block.Header.Height)
+		//assert.Len(t, block.Transactions, 2)
+		//assert.Len(t, block.ValidatorUpdates, 1)
 	})
 }
 
@@ -81,7 +82,7 @@ func TestConsoleReaderValidation(t *testing.T) {
 			reader, err := NewConsoleReader(makeLinesChan(ex.lines...), zap.NewNop())
 			assert.NoError(t, err)
 
-			_, err = reader.Read()
+			_, err = reader.ReadBlock()
 			assert.EqualError(t, err, ex.err)
 		})
 	}

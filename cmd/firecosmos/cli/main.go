@@ -10,12 +10,10 @@ import (
 	"github.com/streamingfast/dlauncher/flags"
 	"github.com/streamingfast/dlauncher/launcher"
 	"github.com/streamingfast/logging"
-	"go.uber.org/zap"
 )
 
 var (
-	userLog  = launcher.UserLog
-	zlog     *zap.Logger
+	zlog, _  = logging.RootLogger("fireeth", "github.com/streamingfast/firehose-cosmos/cmd/firecosmos")
 	allFlags = map[string]bool{}
 
 	RootCmd = &cobra.Command{
@@ -24,10 +22,6 @@ var (
 		// Version:  // set by cmd/main.go
 	}
 )
-
-func init() {
-	logging.Register("main", &zlog)
-}
 
 func Main() {
 	cobra.OnInitialize(func() {
@@ -38,21 +32,20 @@ func Main() {
 	RootCmd.PersistentPreRunE = preRun
 
 	RootCmd.AddCommand(
-		initCommand,
 		startCommand,
 		resetCommand,
 		tools.Cmd,
 	)
 
-	derr.Check("registering application flags", launcher.RegisterFlags(startCommand))
+	derr.Check("registering application flags", launcher.RegisterFlags(zlog, startCommand))
 	derr.Check("executing root command", RootCmd.Execute())
 }
 
 func preRun(cmd *cobra.Command, args []string) error {
 	DataDir = viper.GetString("data-dir")
 
-	if launcher.DfuseConfig == nil {
-		launcher.DfuseConfig = map[string]*launcher.DfuseCommandConfig{}
+	if launcher.Config == nil {
+		launcher.Config = map[string]*launcher.CommandConfig{}
 	}
 
 	if configFile := viper.GetString("config"); configFile != "" {
@@ -63,7 +56,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	cfg := launcher.DfuseConfig[cmd.Name()]
+	cfg := launcher.Config[cmd.Name()]
 	if cfg != nil {
 		for k, v := range cfg.Flags {
 			validFlag := false
@@ -77,7 +70,7 @@ func preRun(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	launcher.SetupLogger(&launcher.LoggingOptions{
+	launcher.SetupLogger(zlog, &launcher.LoggingOptions{
 		WorkingDir:    viper.GetString("data-dir"),
 		Verbosity:     viper.GetInt("verbose"),
 		LogFormat:     viper.GetString("log-format"),
@@ -85,8 +78,8 @@ func preRun(cmd *cobra.Command, args []string) error {
 		LogListenAddr: viper.GetString("log-level-switcher-listen-addr"),
 	})
 
-	launcher.SetupTracing()
-	launcher.SetupAnalyticsMetrics(viper.GetString("metrics-listen-addr"), viper.GetString("pprof-listen-addr"))
+	launcher.SetupTracing("firecosmos")
+	launcher.SetupAnalyticsMetrics(zlog, viper.GetString("metrics-listen-addr"), viper.GetString("pprof-listen-addr"))
 
 	return nil
 }

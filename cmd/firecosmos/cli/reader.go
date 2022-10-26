@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/streamingfast/dgrpc"
+	dgrpcserver "github.com/streamingfast/dgrpc/server"
 	"github.com/streamingfast/node-manager/mindreader"
 	"github.com/streamingfast/shutter"
 	"go.uber.org/zap"
@@ -22,7 +22,7 @@ type ReaderApp struct {
 	lineBufferSize   int
 	serverListenAddr string
 	mrp              *mindreader.MindReaderPlugin
-	server           *dgrpc.Server
+	server           dgrpcserver.Server
 
 	// Node runner options
 	nodeBinPath    string

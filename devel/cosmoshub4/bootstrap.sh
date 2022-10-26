@@ -71,7 +71,6 @@ if [ ! -f "gaia_home/config/genesis.json" ]; then
   gunzip gaia_home/config/genesis.json.gz
 fi
 
-echo "wut"
 case $NETWORK in
   mainnet) # Using addrbook will ensure fast block sync time
     if [ ! -f "gaia_home/config/addrbook.json" ]; then
@@ -95,8 +94,6 @@ enabled = true
 output_file = "stdout"
 END
 
-echo "about to.."
-pwd
 if [ ! -f "firehose.yml" ]; then
   cat << END >> firehose.yml
 start:

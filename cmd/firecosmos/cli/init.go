@@ -14,13 +14,13 @@ var (
 )
 
 func runInitCommand(cmd *cobra.Command, args []string) error {
-	if err := mkdirStorePathIfLocal(mustReplaceDataDir(DataDir, viper.GetString("common-merged-blocks-store-url"))); err != nil {
+	if err := mkdirStorePathIfLocal(MustReplaceDataDir(DataDir, viper.GetString("common-merged-blocks-store-url"))); err != nil {
 		return err
 	}
 
-	if err := mkdirStorePathIfLocal(mustReplaceDataDir(DataDir, viper.GetString("common-oneblock-store-url"))); err != nil {
+	if err := mkdirStorePathIfLocal(MustReplaceDataDir(DataDir, viper.GetString("common-oneblock-store-url"))); err != nil {
 		return err
 	}
 
-	return mkdirStorePathIfLocal(mustReplaceDataDir(DataDir, viper.GetString("merger-state-file")))
+	return mkdirStorePathIfLocal(MustReplaceDataDir(DataDir, viper.GetString("merger-state-file")))
 }
