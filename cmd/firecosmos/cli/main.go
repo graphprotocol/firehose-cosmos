@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	zlog, _  = logging.RootLogger("fireeth", "github.com/streamingfast/firehose-cosmos/cmd/firecosmos")
+	zlog, _  = logging.RootLogger("firecosmos", "github.com/figment-network/firehose-cosmos/cmd/firecosmos")
 	allFlags = map[string]bool{}
 
 	RootCmd = &cobra.Command{

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -53,6 +52,7 @@ func init() {
 		flags.String("reader-node-args", "", "Node process arguments")
 		flags.String("reader-node-env", "", "Node process env vars")
 		flags.String("reader-node-logs-filter", "", "Node process log filter expression")
+		flags.String("reader-oneblock-suffix", "default", "suffix appended to one-block-files to identify a specific reader process in redundant mode")
 
 		return nil
 	}
@@ -76,12 +76,12 @@ func init() {
 		sfDataDir := runtime.AbsDataDir
 
 		_, oneBlockStoreURL, _, err := GetCommonStoresURLs(runtime.AbsDataDir)
-		workingDir := MustReplaceDataDir(sfDataDir, viper.GetString("ingestor-working-dir"))
-		gprcListenAdrr := viper.GetString("ingestor-grpc-listen-addr")
-		batchStartBlockNum := viper.GetUint64("ingestor-start-block-num")
-		batchStopBlockNum := viper.GetUint64("ingestor-stop-block-num")
-		oneBlockFileSuffix := viper.GetString("ingestor-oneblock-suffix")
-		blocksChanCapacity := viper.GetInt("ingestor-blocks-chan-capacity")
+		workingDir := MustReplaceDataDir(sfDataDir, viper.GetString("reader-working-dir"))
+		gprcListenAdrr := viper.GetString("reader-grpc-listen-addr")
+		batchStartBlockNum := viper.GetUint64("reader-start-block-num")
+		batchStopBlockNum := viper.GetUint64("reader-stop-block-num")
+		oneBlockFileSuffix := viper.GetString("reader-oneblock-suffix")
+		blocksChanCapacity := viper.GetInt("reader-blocks-chan-capacity")
 
 		consoleReaderFactory := func(lines chan string) (mindreader.ConsolerReader, error) {
 			return codec.NewConsoleReader(lines, zlog)
@@ -117,8 +117,8 @@ func init() {
 			appTracer,
 		)
 		if err != nil {
-			log.Fatal("error initialising reader", zap.Error(err))
-			return nil, nil
+			zlog.Error("error initialising reader", zap.Error(err))
+			return nil, err
 		}
 
 		return &ReaderApp{

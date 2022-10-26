@@ -5,11 +5,4 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	traceEnabled = logging.IsTraceEnabled("tools", "tools")
-	zlog         = zap.NewNop()
-)
-
-func init() {
-	logging.Register("tools", &zlog)
-}
+var zlog, tracer = logging.PackageLogger("tools", "github.com/figment-networks/firehose-cosmos/tools", logging.LoggerDefaultLevel(zap.InfoLevel))
