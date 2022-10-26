@@ -5,15 +5,17 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/streamingfast/bstream"
 	"github.com/streamingfast/bstream/blockstream"
 	dgrpcserver "github.com/streamingfast/dgrpc/server"
 	dgrpcfactory "github.com/streamingfast/dgrpc/server/factory"
 	"github.com/streamingfast/dlauncher/launcher"
 	"github.com/streamingfast/logging"
+	nodeManager "github.com/streamingfast/node-manager"
+	"github.com/streamingfast/node-manager/metrics"
 	"github.com/streamingfast/node-manager/mindreader"
 	pbbstream "github.com/streamingfast/pbgo/sf/bstream/v1"
 	pbheadinfo "github.com/streamingfast/pbgo/sf/headinfo/v1"
@@ -45,6 +47,7 @@ func init() {
 		flags.String("reader-logs-dir", "", "Event logs source directory")
 		flags.String("reader-logs-pattern", "\\.log(\\.[\\d]+)?", "Logs file pattern")
 		flags.Int("reader-line-buffer-size", defaultLineBufferSize, "Buffer size in bytes for the line reader")
+		flags.Duration("reader-readiness-max-latency", 2*time.Minute, "Determine the maximum head block latency at which the instance will be determined healthy. Some chains have more regular block production than others.")
 		flags.String("reader-working-dir", "{fh-data-dir}/workdir", "Path where reader will stores its files")
 		flags.String("reader-grpc-listen-addr", BlockStreamServingAddr, "GRPC server listen address")
 		flags.String("reader-node-path", "", "Path to node binary")
@@ -82,6 +85,7 @@ func init() {
 		batchStopBlockNum := viper.GetUint64("reader-stop-block-num")
 		oneBlockFileSuffix := viper.GetString("reader-oneblock-suffix")
 		blocksChanCapacity := viper.GetInt("reader-blocks-chan-capacity")
+		readinessMaxLatency := viper.GetDuration("reader-readiness-max-latency")
 
 		consoleReaderFactory := func(lines chan string) (mindreader.ConsolerReader, error) {
 			return codec.NewConsoleReader(lines, zlog)
@@ -102,6 +106,8 @@ func init() {
 		sr.RegisterService(&pbheadinfo.HeadInfo_ServiceDesc, blockStreamServer)
 		sr.RegisterService(&pbbstream.BlockStream_ServiceDesc, blockStreamServer)
 
+		metricsAndReadinessManager := buildMetricsAndReadinessManager("reader", readinessMaxLatency)
+
 		mrp, err := mindreader.NewMindReaderPlugin(
 			oneBlockStoreURL,
 			workingDir,
@@ -109,7 +115,7 @@ func init() {
 			batchStartBlockNum,
 			batchStopBlockNum,
 			blocksChanCapacity,
-			headBlockUpdater,
+			metricsAndReadinessManager.UpdateHeadBlock,
 			func(error) {},
 			oneBlockFileSuffix,
 			blockStreamServer,
@@ -148,11 +154,6 @@ func init() {
 	})
 }
 
-func headBlockUpdater(_ *bstream.Block) error {
-	// TODO: will need to be implemented somewhere
-	return nil
-}
-
 func checkLogsSource(dir string) error {
 	if dir == "" {
 		return errors.New("reader logs dir must be set")
@@ -185,4 +186,18 @@ func checkNodeBinPath(binPath string) error {
 	}
 
 	return nil
+}
+
+func buildMetricsAndReadinessManager(name string, maxLatency time.Duration) *nodeManager.MetricsAndReadinessManager {
+	headBlockTimeDrift := metrics.NewHeadBlockTimeDrift(name)
+	headBlockNumber := metrics.NewHeadBlockNumber(name)
+	appReadiness := metrics.NewAppReadiness(name)
+
+	metricsAndReadinessManager := nodeManager.NewMetricsAndReadinessManager(
+		headBlockTimeDrift,
+		headBlockNumber,
+		appReadiness,
+		maxLatency,
+	)
+	return metricsAndReadinessManager
 }
