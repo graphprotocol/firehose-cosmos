@@ -48,7 +48,6 @@ func (cr *ConsoleReader) ReadBlock() (out *bstream.Block, err error) {
 	}
 
 	pbBlock := v.(*pbcosmos.Block)
-	fmt.Println("pbblock is", pbBlock)
 	blk, err := FromProto(pbBlock)
 	if err != nil {
 		return nil, err
