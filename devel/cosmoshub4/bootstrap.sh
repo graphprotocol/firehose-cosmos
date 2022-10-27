@@ -108,7 +108,6 @@ start:
     reader-node-path: ./gaiad
     reader-node-args: start --x-crisis-skip-assert-invariants --home=./gaia_home
     reader-node-logs-filter: "module=(p2p|pex|consensus|x/bank)"
-    firehose-real-time-tolerance: 99999h
     relayer-max-source-latency: 99999h
     verbose: 1
 END

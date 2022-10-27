@@ -107,6 +107,7 @@ func init() {
 		sr.RegisterService(&pbbstream.BlockStream_ServiceDesc, blockStreamServer)
 
 		metricsAndReadinessManager := buildMetricsAndReadinessManager("reader", readinessMaxLatency)
+		go metricsAndReadinessManager.Launch()
 
 		mrp, err := mindreader.NewMindReaderPlugin(
 			oneBlockStoreURL,
