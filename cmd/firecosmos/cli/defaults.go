@@ -21,7 +21,9 @@ var (
 	// Blocks store
 	MergedBlocksStoreURL string = "file://{fh-data-dir}/storage/merged-blocks"
 	OneBlockStoreURL     string = "file://{fh-data-dir}/storage/one-blocks"
-	ForkedBlockStoreURL  string = "file://{fh-data-dir}/storage/forked-blocks"
+
+	IndexStoreURL   string = "file://{fh-data-dir}/storage/block-index"
+	IndexStoreSizes        = []int{100000, 10000, 1000}
 
 	// Protocol defaults
 	FirstStreamableBlock uint64 = 0
@@ -48,9 +50,11 @@ func initCommonFlags(flags *pflag.FlagSet) {
 	// Common stores configuration flags
 	flags.String("common-merged-blocks-store-url", MergedBlocksStoreURL, "Store URL (with prefix) where to read/write")
 	flags.String("common-one-block-store-url", OneBlockStoreURL, "Store URL (with prefix) to read/write one-block files")
-	flags.String("common-forked-blocks-store-url", ForkedBlockStoreURL, "Store URL (with prefix) to read/write forked one-block files")
 	flags.String("common-live-blocks-addr", RelayerServingAddr, "GRPC endpoint to get real-time blocks")
 	flags.Uint64("common-first-streamable-block", FirstStreamableBlock, "First streamable block number")
+
+	flags.String("common-index-store-url", IndexStoreURL, "[COMMON] Store URL (with prefix) to read/write index files.")
+	flags.IntSlice("common-block-index-sizes", []int{100000, 100000, 10000, 1000}, "index bundle sizes that that are considered valid when looking for block indexes")
 
 	// Authentication, metering and rate limiter plugins
 	flags.String("common-auth-plugin", "null://", "Auth plugin URI, see streamingfast/dauth repository")

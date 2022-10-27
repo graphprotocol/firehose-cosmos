@@ -78,7 +78,7 @@ func init() {
 	factoryFunc := func(runtime *launcher.Runtime) (launcher.App, error) {
 		sfDataDir := runtime.AbsDataDir
 
-		_, oneBlockStoreURL, _, err := GetCommonStoresURLs(runtime.AbsDataDir)
+		_, oneBlockStoreURL, err := GetCommonStoresURLs(runtime.AbsDataDir)
 		workingDir := MustReplaceDataDir(sfDataDir, viper.GetString("reader-working-dir"))
 		gprcListenAdrr := viper.GetString("reader-grpc-listen-addr")
 		batchStartBlockNum := viper.GetUint64("reader-start-block-num")

@@ -23,7 +23,7 @@ func init() {
 		if len(sources) == 0 {
 			return nil, errors.New("relayer sources are empty")
 		}
-		_, oneBlocksStoreURL, _, err := GetCommonStoresURLs(runtime.AbsDataDir)
+		_, oneBlocksStoreURL, err := GetCommonStoresURLs(runtime.AbsDataDir)
 		if err != nil {
 			return nil, err
 		}

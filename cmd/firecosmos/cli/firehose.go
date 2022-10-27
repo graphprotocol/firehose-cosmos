@@ -54,7 +54,7 @@ func init() {
 		}
 		dmetering.SetDefaultMeter(metering)
 
-		mergedBlocksStoreURL, oneBlocksStoreURL, forkedBlocksStoreURL, err := GetCommonStoresURLs(runtime.AbsDataDir)
+		mergedBlocksStoreURL, oneBlocksStoreURL, err := GetCommonStoresURLs(runtime.AbsDataDir)
 		if err != nil {
 			return nil, err
 		}
@@ -79,7 +79,7 @@ func init() {
 			&firehoseApp.Config{
 				MergedBlocksStoreURL:    mergedBlocksStoreURL,
 				OneBlocksStoreURL:       oneBlocksStoreURL,
-				ForkedBlocksStoreURL:    forkedBlocksStoreURL,
+				ForkedBlocksStoreURL:    ".", // no forked blocks here
 				BlockStreamAddr:         blockstreamAddr,
 				GRPCListenAddr:          viper.GetString("firehose-grpc-listen-addr"),
 				GRPCShutdownGracePeriod: grcpShutdownGracePeriod,
@@ -95,7 +95,7 @@ func init() {
 	launcher.RegisterApp(zlog, &launcher.AppDef{
 		ID:            "firehose",
 		Title:         "Block Firehose",
-		Description:   "Provides on-demand filtered blocks, depends on common-merged-blocks-store-url, common-forked-blocks-store-url and common-live-blocks-addr",
+		Description:   "Provides on-demand filtered blocks, depends on common-merged-blocks-store-url and common-live-blocks-addr",
 		RegisterFlags: registerFlags,
 		FactoryFunc:   factoryFunc,
 	})
