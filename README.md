@@ -128,6 +128,7 @@ start:
 
 We provide scripts for running firehose for these networks:
 
+- [Coreum1](devel/coreum1/)
 - [Cosmoshub4](devel/cosmoshub4/)
 - [Osmosis1](devel/osmosis1/)
 
