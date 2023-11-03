@@ -9,8 +9,8 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 
-	pbtransform "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/transform/v1"
-	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
+	pbtransform "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/transform/v1"
+	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
 )
 
 var MessageTypeFilterMessageName = proto.MessageName(&pbtransform.MessageTypeFilter{})

@@ -6,8 +6,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/figment-networks/firehose-cosmos/codec"
-	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
+	"github.com/graphprotocol/firehose-cosmos/codec"
+	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
+
 	"github.com/spf13/cobra"
 	"github.com/streamingfast/bstream"
 	sftools "github.com/streamingfast/sf-tools"

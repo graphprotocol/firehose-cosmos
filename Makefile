@@ -1,10 +1,10 @@
-PKG          ?= github.com/figment-networks/firehose-cosmos
+PKG          ?= github.com/graphprotocol/firehose-cosmos
 BUILD_COMMIT ?= $(shell git rev-parse HEAD)
 BUILD_TIME   ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ" | tr -d '\n')
 BUILD_PATH   ?= firecosmos
 LDFLAGS      ?= -s -w -X main.BuildCommit=$(BUILD_COMMIT) -X main.BuildTime=$(BUILD_TIME)
 VERSION      ?= latest
-DOCKER_IMAGE ?= figmentnetworks/firehose-cosmos
+DOCKER_IMAGE ?= graphprotocol/firehose-cosmos
 DOCKER_TAG   ?= ${VERSION}
 DOCKER_UID   ?= 1234
 

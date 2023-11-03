@@ -23,7 +23,7 @@ import (
 	"github.com/streamingfast/shutter"
 	"go.uber.org/zap"
 
-	"github.com/figment-networks/firehose-cosmos/codec"
+	"github.com/graphprotocol/firehose-cosmos/codec"
 )
 
 const (
@@ -34,7 +34,7 @@ const (
 	modeNode  = "node"  // Consume events from the spawned node process
 )
 
-var readerLogger, readerTracer = logging.PackageLogger("reader", "github.com/figment-network/firehose-cosmos/noderunner")
+var readerLogger, readerTracer = logging.PackageLogger("reader", "github.com/graphprotocol/firehose-cosmos/noderunner")
 
 func init() {
 	appLogger := readerLogger

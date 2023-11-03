@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/figment-networks/firehose-cosmos/tools"
+	"github.com/graphprotocol/firehose-cosmos/tools"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/streamingfast/derr"
@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	zlog, _  = logging.RootLogger("firecosmos", "github.com/figment-network/firehose-cosmos/cmd/firecosmos")
+	zlog, _  = logging.RootLogger("firecosmos", "github.com/graphprotocol/firehose-cosmos/cmd/firecosmos")
 	allFlags = map[string]bool{}
 
 	RootCmd = &cobra.Command{
