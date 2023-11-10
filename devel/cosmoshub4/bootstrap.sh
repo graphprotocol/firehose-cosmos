@@ -53,7 +53,7 @@ echo "Your platform is $OS_PLATFORM/$OS_ARCH"
 
 if [ ! -f "gaiad" ]; then
   echo "Downloading gaiad $GAIA_VERSION binary"
-  wget --quiet -O ./gaiad "https://github.com/figment-networks/gaia-dm/releases/download/$GAIA_VERSION/gaiad_${GAIA_VERSION}_firehose_$GAIA_PLATFORM"
+  wget --quiet -O ./gaiad "https://github.com/graphprotocol/gaia-dm/releases/download/$GAIA_VERSION/gaiad_${GAIA_VERSION}_firehose_$GAIA_PLATFORM"
   chmod +x ./gaiad
 fi
 

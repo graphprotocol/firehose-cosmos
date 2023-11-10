@@ -3,7 +3,8 @@ package tools
 import (
 	"fmt"
 
-	"github.com/figment-networks/firehose-cosmos/codec"
+	"github.com/graphprotocol/firehose-cosmos/codec"
+
 	"github.com/spf13/cobra"
 )
 

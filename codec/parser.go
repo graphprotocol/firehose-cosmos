@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/figment-networks/extractor-cosmos"
-	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
+	"github.com/graphprotocol/extractor-cosmos"
+	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
 
 	"google.golang.org/protobuf/proto"
 )

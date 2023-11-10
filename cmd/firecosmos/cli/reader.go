@@ -11,8 +11,8 @@ import (
 	"github.com/streamingfast/shutter"
 	"go.uber.org/zap"
 
-	"github.com/figment-networks/firehose-cosmos/filereader"
-	"github.com/figment-networks/firehose-cosmos/noderunner"
+	"github.com/graphprotocol/firehose-cosmos/filereader"
+	"github.com/graphprotocol/firehose-cosmos/noderunner"
 )
 
 type ReaderApp struct {

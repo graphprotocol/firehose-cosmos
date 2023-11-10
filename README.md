@@ -7,7 +7,7 @@ Firehose integration for Cosmos chains
 To get started, first clone the repository and install all dependencies:
 
 ```bash
-git clone https://github.com/figment-networks/firehose-cosmos.git
+git clone https://github.com/graphprotocol/firehose-cosmos.git
 go mod download
 ```
 
@@ -25,20 +25,20 @@ To install the binary globally, run:
 make install
 ```
 
-Alternatively, use a prebuilt binary from [Releases Page](https://github.com/figment-networks/firehose-cosmos/releases)
+Alternatively, use a prebuilt binary from [Releases Page](https://github.com/graphprotocol/firehose-cosmos/releases)
 
 ### Docker
 
-You can use our official Docker images: https://hub.docker.com/r/figmentnetworks/firehose-cosmos/tags
+You can use our official Docker images: https://hub.docker.com/r/graphprotocol/firehose-cosmos/tags
 
 ```
-docker pull figmentnetworks/firehose-cosmos:0.4.0
+docker pull graphprotocol/firehose-cosmos:0.4.0
 ```
 
 Execute with:
 
 ```
-docker run --rm -it figmentnetworks/firehose-cosmos:0.4.0 /app/firehose help
+docker run --rm -it graphprotocol/firehose-cosmos:0.4.0 /app/firehose help
 ```
 
 ## Usage

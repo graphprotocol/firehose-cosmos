@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/figment-networks/firehose-cosmos/cmd/firecosmos/cli"
+	"github.com/graphprotocol/firehose-cosmos/cmd/firecosmos/cli"
 )
 
 // Commit sha1 value, injected via go build `ldflags` at build time

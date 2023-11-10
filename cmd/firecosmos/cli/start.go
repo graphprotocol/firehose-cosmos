@@ -1,7 +1,8 @@
 package cli
 
 import (
-	"github.com/figment-networks/firehose-cosmos/codec"
+	"github.com/graphprotocol/firehose-cosmos/codec"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/streamingfast/bstream"

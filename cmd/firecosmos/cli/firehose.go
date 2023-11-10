@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
-	sftransform "github.com/figment-networks/firehose-cosmos/transform"
+	sftransform "github.com/graphprotocol/firehose-cosmos/transform"
 	"github.com/streamingfast/bstream/transform"
 	dauthAuthenticator "github.com/streamingfast/dauth/authenticator"
 	_ "github.com/streamingfast/dauth/authenticator/null"

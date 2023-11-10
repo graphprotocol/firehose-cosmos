@@ -5,8 +5,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/figment-networks/extractor-cosmos"
-	pbcosmos "github.com/figment-networks/proto-cosmos/pb/sf/cosmos/type/v1"
+	"github.com/graphprotocol/extractor-cosmos"
+	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/streamingfast/bstream"
 	pbbstream "github.com/streamingfast/pbgo/sf/bstream/v1"
 
