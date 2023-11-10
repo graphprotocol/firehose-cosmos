@@ -1,4 +1,0 @@
-package cli
-
-func init() {
-}

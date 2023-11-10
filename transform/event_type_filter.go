@@ -15,7 +15,7 @@ import (
 
 var EventTypeFilterMessageName = proto.MessageName(&pbtransform.EventTypeFilter{})
 
-func EventTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
+func NewEventTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) (*transform.Factory, error) {
 	return &transform.Factory{
 		Obj: &pbtransform.EventTypeFilter{},
 		NewFunc: func(message *anypb.Any) (transform.Transform, error) {
@@ -44,7 +44,7 @@ func EventTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64
 				indexStore:         indexStore,
 			}, nil
 		},
-	}
+	}, nil
 }
 
 type EventTypeFilter struct {

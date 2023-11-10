@@ -4,26 +4,26 @@ import (
 	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/streamingfast/bstream/transform"
 	"github.com/streamingfast/dstore"
+	firecore "github.com/streamingfast/firehose-core"
 )
+
+func NewEventOriginIndexer(indexStore dstore.Store, indexSize uint64) (firecore.BlockIndexer[*pbcosmos.Block], error) {
+	bi := transform.NewBlockIndexer(
+		indexStore,
+		indexSize,
+		EventOriginIndexShortName,
+	)
+
+	return &EventOriginIndexer{
+		BlockIndexer: bi,
+	}, nil
+}
 
 type EventOriginIndexer struct {
 	BlockIndexer blockIndexer
 }
 
-func NewEventOriginIndexer(indexStore dstore.Store, indexSize uint64, startBlock uint64) *EventOriginIndexer {
-	bi := transform.NewBlockIndexer(
-		indexStore,
-		indexSize,
-		EventOriginIndexShortName,
-		transform.WithDefinedStartBlock(startBlock),
-	)
-
-	return &EventOriginIndexer{
-		BlockIndexer: bi,
-	}
-}
-
-func (i *EventOriginIndexer) ProcessBlock(block *pbcosmos.Block) {
+func (i *EventOriginIndexer) ProcessBlock(block *pbcosmos.Block) error {
 	keyMap := make(map[EventOrigin]bool)
 
 	if len(block.ResultBeginBlock.Events) > 0 {
@@ -47,4 +47,6 @@ func (i *EventOriginIndexer) ProcessBlock(block *pbcosmos.Block) {
 	}
 
 	i.BlockIndexer.Add(keys, block.Header.Height)
+
+	return nil
 }

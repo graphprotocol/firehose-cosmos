@@ -15,7 +15,7 @@ import (
 
 var MessageTypeFilterMessageName = proto.MessageName(&pbtransform.MessageTypeFilter{})
 
-func MessageTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
+func NewMessageTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) (*transform.Factory, error) {
 	return &transform.Factory{
 		Obj: &pbtransform.MessageTypeFilter{},
 		NewFunc: func(message *anypb.Any) (transform.Transform, error) {
@@ -44,7 +44,7 @@ func MessageTypeFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint
 				indexStore:         indexStore,
 			}, nil
 		},
-	}
+	}, nil
 }
 
 type MessageTypeFilter struct {

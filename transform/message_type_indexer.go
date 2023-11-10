@@ -4,6 +4,7 @@ import (
 	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/streamingfast/bstream/transform"
 	"github.com/streamingfast/dstore"
+	firecore "github.com/streamingfast/firehose-core"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 
@@ -11,20 +12,19 @@ type MessageTypeIndexer struct {
 	BlockIndexer blockIndexer
 }
 
-func NewMessageTypeIndexer(indexStore dstore.Store, indexSize uint64, startBlock uint64) *MessageTypeIndexer {
+func NewMessageTypeIndexer(indexStore dstore.Store, indexSize uint64) (firecore.BlockIndexer[*pbcosmos.Block], error) {
 	bi := transform.NewBlockIndexer(
 		indexStore,
 		indexSize,
 		MessageTypeIndexShortName,
-		transform.WithDefinedStartBlock(startBlock),
 	)
 
 	return &MessageTypeIndexer{
 		BlockIndexer: bi,
-	}
+	}, nil
 }
 
-func (i *MessageTypeIndexer) ProcessBlock(block *pbcosmos.Block) {
+func (i *MessageTypeIndexer) ProcessBlock(block *pbcosmos.Block) error {
 	keyMap := make(map[string]bool)
 
 	for _, tx := range block.Transactions {
@@ -37,6 +37,8 @@ func (i *MessageTypeIndexer) ProcessBlock(block *pbcosmos.Block) {
 	}
 
 	i.BlockIndexer.Add(keys, block.Header.Height)
+
+	return nil
 }
 
 func processMessages(keyMap map[string]bool, messages []*anypb.Any) {
