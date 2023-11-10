@@ -8,26 +8,28 @@ import (
 	"github.com/graphprotocol/extractor-cosmos"
 	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/streamingfast/bstream"
-	pbbstream "github.com/streamingfast/pbgo/sf/bstream/v1"
-
+	firecore "github.com/streamingfast/firehose-core"
+	"github.com/streamingfast/logging"
+	"github.com/streamingfast/node-manager/mindreader"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 type ConsoleReader struct {
-	lines  chan string
-	logger *zap.Logger
-	done   chan interface{}
+	lines   chan string
+	logger  *zap.Logger
+	done    chan interface{}
+	encoder firecore.BlockEncoder
 
 	height uint64
 	block  *pbcosmos.Block
 }
 
-func NewConsoleReader(lines chan string, logger *zap.Logger) (*ConsoleReader, error) {
+func NewConsoleReader(lines chan string, blockEncoder firecore.BlockEncoder, logger *zap.Logger, tracer logging.Tracer) (mindreader.ConsolerReader, error) {
 	return &ConsoleReader{
-		lines:  lines,
-		logger: logger,
-		done:   make(chan interface{}),
+		lines:   lines,
+		logger:  logger,
+		done:    make(chan interface{}),
+		encoder: blockEncoder,
 	}, nil
 }
 
@@ -48,7 +50,7 @@ func (cr *ConsoleReader) ReadBlock() (out *bstream.Block, err error) {
 	}
 
 	pbBlock := v.(*pbcosmos.Block)
-	blk, err := FromProto(pbBlock)
+	blk, err := cr.encoder.Encode(pbBlock)
 	if err != nil {
 		return nil, err
 	}
@@ -98,41 +100,4 @@ func (cr *ConsoleReader) startHeight(height uint64) error {
 
 	cr.height = height
 	return nil
-}
-
-func FromProto(b interface{}) (*bstream.Block, error) {
-	block, ok := b.(*pbcosmos.Block)
-	if !ok {
-		return nil, fmt.Errorf("unsupported type")
-	}
-
-	payload, err := proto.Marshal(block)
-	if err != nil {
-		return nil, err
-	}
-
-	previousID := ""
-	if block.Header.LastBlockId != nil {
-		previousID = hex2string(block.Header.LastBlockId.Hash)
-	}
-	blk := &bstream.Block{
-		Id:             hex2string(block.Header.Hash),
-		PreviousId:     previousID,
-		Number:         uint64(block.Header.Height),
-		LibNum:         uint64(block.Header.Height - 1),
-		Timestamp:      parseTimestamp(block.Header.Time),
-		PayloadKind:    pbbstream.Protocol_COSMOS,
-		PayloadVersion: 1,
-	}
-
-	if block.Header.Height == bstream.GetProtocolFirstStreamableBlock {
-		blk.LibNum = bstream.GetProtocolFirstStreamableBlock
-		blk.PreviousId = ""
-	}
-
-	return bstream.GetBlockPayloadSetter(blk, payload)
-}
-
-func hex2string(src []byte) string {
-	return fmt.Sprintf("%X", src)
 }

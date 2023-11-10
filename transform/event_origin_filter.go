@@ -23,7 +23,7 @@ const (
 
 var EventOriginFilterMessageName = proto.MessageName(&pbtransform.EventOriginFilter{})
 
-func EventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) *transform.Factory {
+func NewEventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint64) (*transform.Factory, error) {
 	return &transform.Factory{
 		Obj: &pbtransform.EventOriginFilter{},
 		NewFunc: func(message *anypb.Any) (transform.Transform, error) {
@@ -52,7 +52,7 @@ func EventOriginFilterFactory(indexStore dstore.Store, possibleIndexSizes []uint
 				indexStore:         indexStore,
 			}, nil
 		},
-	}
+	}, nil
 }
 
 type EventOriginFilter struct {

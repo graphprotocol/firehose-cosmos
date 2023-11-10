@@ -4,6 +4,7 @@ import (
 	pbcosmos "github.com/graphprotocol/proto-cosmos/pb/sf/cosmos/type/v1"
 	"github.com/streamingfast/bstream/transform"
 	"github.com/streamingfast/dstore"
+	firecore "github.com/streamingfast/firehose-core"
 )
 
 type blockIndexer interface {
@@ -14,20 +15,19 @@ type EventTypeIndexer struct {
 	BlockIndexer blockIndexer
 }
 
-func NewEventTypeIndexer(indexStore dstore.Store, indexSize uint64, startBlock uint64) *EventTypeIndexer {
+func NewEventTypeIndexer(indexStore dstore.Store, indexSize uint64) (firecore.BlockIndexer[*pbcosmos.Block], error) {
 	bi := transform.NewBlockIndexer(
 		indexStore,
 		indexSize,
 		EventTypeIndexShortName,
-		transform.WithDefinedStartBlock(startBlock),
 	)
 
 	return &EventTypeIndexer{
 		BlockIndexer: bi,
-	}
+	}, nil
 }
 
-func (i *EventTypeIndexer) ProcessBlock(block *pbcosmos.Block) {
+func (i *EventTypeIndexer) ProcessBlock(block *pbcosmos.Block) error {
 	keyMap := make(map[string]bool)
 
 	processEvents(keyMap, block.ResultBeginBlock.Events)
@@ -43,6 +43,8 @@ func (i *EventTypeIndexer) ProcessBlock(block *pbcosmos.Block) {
 	}
 
 	i.BlockIndexer.Add(keys, block.Header.Height)
+
+	return nil
 }
 
 func processEvents(keyMap map[string]bool, events []*pbcosmos.Event) {

@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/streamingfast/bstream"
+	firecore "github.com/streamingfast/firehose-core"
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
 )
 
 func makeLinesChan(lines ...string) chan string {
@@ -28,7 +28,7 @@ func TestConsoleReader(t *testing.T) {
 			"DMLOG END 5201079",
 		)
 
-		reader, err := NewConsoleReader(lines, zap.NewNop())
+		reader, err := NewConsoleReader(lines, firecore.NewBlockEncoder(), zlog, tracer)
 		assert.NoError(t, err)
 
 		blockObj, err := reader.ReadBlock()
@@ -79,7 +79,7 @@ func TestConsoleReaderValidation(t *testing.T) {
 
 	for _, ex := range examples {
 		t.Run(ex.name, func(t *testing.T) {
-			reader, err := NewConsoleReader(makeLinesChan(ex.lines...), zap.NewNop())
+			reader, err := NewConsoleReader(makeLinesChan(ex.lines...), firecore.NewBlockEncoder(), zlog, tracer)
 			assert.NoError(t, err)
 
 			_, err = reader.ReadBlock()
