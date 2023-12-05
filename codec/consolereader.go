@@ -3,6 +3,7 @@ package codec
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 
 	"github.com/graphprotocol/extractor-cosmos"
@@ -60,6 +61,19 @@ func (cr *ConsoleReader) next() (out interface{}, err error) {
 	for line := range cr.lines {
 		pl, err := parseLine(strings.TrimSpace(line))
 		if err != nil {
+			// if there's an error, write the whole line to a special log file
+			logFile := "error_line.log"
+			// open file for appending
+			f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err != nil {
+				return nil, fmt.Errorf("error opening file: %w", err)
+			}
+
+			// write the error line to the file
+			if _, err := f.WriteString(line + "\n"); err != nil {
+				return nil, fmt.Errorf("error writing to file: %w", err)
+			}
+
 			return nil, fmt.Errorf("%s (line %q)", err, line)
 		}
 		if pl == nil {
