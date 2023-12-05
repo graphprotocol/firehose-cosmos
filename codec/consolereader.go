@@ -61,17 +61,18 @@ func (cr *ConsoleReader) next() (out interface{}, err error) {
 	for line := range cr.lines {
 		pl, err := parseLine(strings.TrimSpace(line))
 		if err != nil {
-			// if there's an error, write the whole line to a special log file
-			logFile := "error_line.log"
+			// if there's an error, write the whole line to a special log file in the temp directory
+			logFile := "/tmp/extractor-cosmos.log"
+
 			// open file for appending
-			f, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-			if err != nil {
-				return nil, fmt.Errorf("error opening file: %w", err)
+			f, err2 := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+			if err2 != nil {
+				return nil, fmt.Errorf("error opening file: %w", err2)
 			}
 
 			// write the error line to the file
-			if _, err := f.WriteString(line + "\n"); err != nil {
-				return nil, fmt.Errorf("error writing to file: %w", err)
+			if _, err2 := f.WriteString(line + "\n"); err2 != nil {
+				return nil, fmt.Errorf("error writing to file: %w", err2)
 			}
 
 			return nil, fmt.Errorf("%s (line %q)", err, line)
