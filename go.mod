@@ -80,7 +80,7 @@ require (
 require (
 	github.com/RoaringBitmap/roaring v0.9.4
 	github.com/graphprotocol/extractor-cosmos v0.1.1
-	github.com/graphprotocol/proto-cosmos v0.1.3
+	github.com/graphprotocol/proto-cosmos v0.1.4
 	github.com/lithammer/dedent v1.1.0
 	github.com/spf13/cobra v1.4.0
 	github.com/spf13/pflag v1.0.5
